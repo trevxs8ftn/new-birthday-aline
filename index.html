@@ -44,6 +44,7 @@
       align-items: center;
       justify-content: center;
       padding: 20px 12px;
+      position: relative;
     }
 
     h1, h2, .display { font-family: 'Playfair Display', serif; }
@@ -265,10 +266,22 @@
       color: #ffffff;
       padding: 36px 26px 28px;
       text-align: center;
+      position: relative;
     }
     .site-header .script { color: var(--gold-light); font-size: 34px; }
     .site-header h2 { margin: 4px 0 0; font-size: 24px; font-weight: 600; }
     .site-header .addr { margin-top: 8px; font-size: 13px; color: #94a3b8; font-weight: 400; }
+    
+    .reset-btn {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--gold-light);
+      text-decoration: underline;
+      cursor: pointer;
+      opacity: 0.8;
+    }
+    .reset-btn:hover { opacity: 1; }
 
     .tabs { 
       display: flex; 
@@ -300,6 +313,7 @@
     .guest-list li {
       display: flex; 
       align-items: center; 
+      justify-content: space-between;
       gap: 12px;
       background: #ffffff; 
       border: 1px solid var(--line); 
@@ -309,6 +323,7 @@
       font-weight: 500;
       box-shadow: 0 2px 6px rgba(0,0,0,0.01);
     }
+    .guest-info { display: flex; align-items: center; gap: 12px; }
     
     .avatar {
       width: 36px; 
@@ -344,6 +359,7 @@
     .upload-zone .u-txt { font-size: 14px; color: var(--ink-muted); font-weight: 500; }
 
     .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .photo-card { position: relative; }
     .photo-grid img { 
       width: 100%; 
       aspect-ratio: 1/1; 
@@ -351,6 +367,7 @@
       border-radius: var(--radius-md); 
       border: 1px solid var(--line); 
       box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      display: block;
     }
 
     .idea-form { display: grid; gap: 12px; margin-bottom: 26px; }
@@ -387,6 +404,7 @@
       border-radius: var(--radius-md);
       padding: 16px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.01);
+      position: relative;
     }
     .idea-list .tag {
       display: inline-block; 
@@ -403,6 +421,60 @@
     .idea-list .who { font-size: 12px; color: var(--ink-muted); margin-top: 6px; }
 
     .footer-note { text-align: center; font-size: 12px; color: #94a3b8; padding: 12px 24px 28px; }
+
+    /* Boutons de suppression (Admin) */
+    .delete-btn {
+      background: #ffe4e6;
+      color: #e11d48;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: none;
+      transition: background 0.2s;
+    }
+    .delete-btn:hover { background: #fecdd3; }
+    body.is-admin .delete-btn { display: inline-block; }
+
+    .delete-btn-photo {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: rgba(225, 29, 72, 0.9);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      font-size: 14px;
+      line-height: 28px;
+      text-align: center;
+      cursor: pointer;
+      display: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    body.is-admin .delete-btn-photo { display: block; }
+
+    /* Bouton d'accès Admin flottant en bas à droite */
+    .admin-trigger {
+      position: fixed;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(15, 45, 34, 0.8);
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 100;
+      backdrop-filter: blur(5px);
+      transition: all 0.2s ease;
+    }
+    .admin-trigger:hover { background: var(--pine); }
 
     @media (max-width: 400px) {
       .headline { font-size: 28px; }
@@ -475,6 +547,7 @@
       <div class="script">Dommage !</div>
       <h2>On espère vous voir la prochaine fois</h2>
       <p>Merci d'avoir répondu — ça aide beaucoup pour l'organisation. On pense fort à vous, on vous racontera tout !</p>
+      <span class="reset-btn" style="color:var(--pine);" onclick="resetSession()">S'inscrire sous un autre nom</span>
     </div>
 
     <!-- SITE PRINCIPAL (après un "oui") -->
@@ -483,6 +556,7 @@
         <div class="script">C'est noté !</div>
         <h2 id="welcomeName">Bienvenue</h2>
         <div class="addr">26–27 sept · Samedi 11h · 3 rue du Ried, Hagenthal-le-Bas</div>
+        <span class="reset-btn" onclick="resetSession()">Changer de nom / Répondre pour un proche</span>
       </div>
 
       <div class="tabs">
@@ -534,6 +608,9 @@
   </div>
 </div>
 
+<!-- Bouton d'accès Admin -->
+<button class="admin-trigger" id="adminBtn">🔒 Admin</button>
+
 <script>
 /* =========================================================
    1) CONFIGURATION FIREBASE INTEGRÉE
@@ -558,7 +635,7 @@ try {
 } catch(e) { console.warn("Firebase non configuré :", e); }
 
 /* =========================================================
-   2) Fallback local (si besoin)
+   2) Fallback local
    ========================================================= */
 const localFallback = {
   guests: JSON.parse(localStorage.getItem('fb_guests')||'[]'),
@@ -572,26 +649,54 @@ function saveLocal(){
 }
 
 /* =========================================================
-   3) Navigation entre écrans
+   3) Gestion de la session utilisateur (Mémoire Locale)
    ========================================================= */
 const screenSeal = document.getElementById('screenSeal');
 const screenDetails = document.getElementById('screenDetails');
 const screenSad = document.getElementById('screenSad');
 const screenSite = document.getElementById('screenSite');
+const nameInput = document.getElementById('guestName');
+const rsvpError = document.getElementById('rsvpError');
 
+// Vérification au chargement
+window.addEventListener('DOMContentLoaded', () => {
+  const userSession = JSON.parse(localStorage.getItem('user_rsvp') || 'null');
+  if (userSession && userSession.repondu) {
+    screenSeal.style.display = 'none';
+    if (userSession.vient) {
+      document.getElementById('welcomeName').textContent = 'Bienvenue, ' + userSession.nom + ' !';
+      nameInput.value = userSession.nom;
+      screenSite.classList.add('show');
+      loadGuests();
+      loadPhotos();
+      loadIdeas();
+    } else {
+      screenSad.classList.add('show');
+    }
+  }
+});
+
+function resetSession() {
+  localStorage.removeItem('user_rsvp');
+  location.reload();
+}
+
+/* =========================================================
+   4) Navigation entre écrans & Réponses
+   ========================================================= */
 document.getElementById('sealBtn').addEventListener('click', ()=>{
   screenSeal.style.display = 'none';
   screenDetails.classList.add('show');
 });
 
-const nameInput = document.getElementById('guestName');
-const rsvpError = document.getElementById('rsvpError');
-
 document.getElementById('btnNo').addEventListener('click', async ()=>{
   const name = nameInput.value.trim();
   if(!name){ rsvpError.style.display='block'; return; }
   rsvpError.style.display='none';
+  
   await recordResponse(name, false);
+  localStorage.setItem('user_rsvp', JSON.stringify({ repondu: true, vient: false, nom: name }));
+  
   screenDetails.classList.remove('show');
   screenSad.classList.add('show');
 });
@@ -600,7 +705,10 @@ document.getElementById('btnYes').addEventListener('click', async ()=>{
   const name = nameInput.value.trim();
   if(!name){ rsvpError.style.display='block'; return; }
   rsvpError.style.display='none';
+  
   await recordResponse(name, true);
+  localStorage.setItem('user_rsvp', JSON.stringify({ repondu: true, vient: true, nom: name }));
+  
   document.getElementById('welcomeName').textContent = 'Bienvenue, ' + name + ' !';
   screenDetails.classList.remove('show');
   screenSite.classList.add('show');
@@ -615,13 +723,13 @@ async function recordResponse(name, coming){
       nom: name, vient: coming, date: firebase.firestore.FieldValue.serverTimestamp()
     });
   }else{
-    localFallback.guests.push({nom:name, vient:coming, date: Date.now()});
+    localFallback.guests.push({id: Date.now().toString(), nom:name, vient:coming, date: Date.now()});
     saveLocal();
   }
 }
 
 /* =========================================================
-   4) Onglets du site principal
+   5) Onglets du site principal
    ========================================================= */
 document.querySelectorAll('.tab').forEach(tab=>{
   tab.addEventListener('click', ()=>{
@@ -633,7 +741,7 @@ document.querySelectorAll('.tab').forEach(tab=>{
 });
 
 /* =========================================================
-   5) Qui vient
+   6) Qui vient
    ========================================================= */
 function initials(name){
   return name.trim().split(/\s+/).slice(0,2).map(w=>w[0]?.toUpperCase()||'').join('');
@@ -647,12 +755,20 @@ async function loadGuests(){
       listEl.innerHTML = '<li class="empty-state" style="border:none;">Personne pour l\'instant — vous êtes les premiers 🎉</li>';
       return;
     }
-    listEl.innerHTML = yes.map(g=>`<li><div class="avatar">${initials(g.nom)}</div>${g.nom}</li>`).join('');
+    listEl.innerHTML = yes.map(g=>`
+      <li>
+        <div class="guest-info">
+          <div class="avatar">${initials(g.nom)}</div>
+          <span>${g.nom}</span>
+        </div>
+        <button class="delete-btn" onclick="deleteGuest('${g.id}')">Supprimer</button>
+      </li>
+    `).join('');
   };
 
   if(firebaseReady){
     db.collection('reponses').onSnapshot(snap=>{
-      const guests = snap.docs.map(d=>d.data());
+      const guests = snap.docs.map(d=>({ id: d.id, ...d.data() }));
       render(guests);
     });
   }else{
@@ -660,8 +776,19 @@ async function loadGuests(){
   }
 }
 
+async function deleteGuest(id) {
+  if(!confirm("Voulez-vous vraiment supprimer cette personne ?")) return;
+  if(firebaseReady){
+    await db.collection('reponses').doc(id).delete();
+  }else{
+    localFallback.guests = localFallback.guests.filter(g=>g.id !== id);
+    saveLocal();
+    loadGuests();
+  }
+}
+
 /* =========================================================
-   6) Photos
+   7) Photos
    ========================================================= */
 const photoInput = document.getElementById('photoInput');
 photoInput.addEventListener('change', (e)=>{
@@ -685,7 +812,7 @@ photoInput.addEventListener('change', (e)=>{
           image: dataUrl, date: firebase.firestore.FieldValue.serverTimestamp()
         });
       }else{
-        localFallback.photos.unshift({image:dataUrl, date:Date.now()});
+        localFallback.photos.unshift({id: Date.now().toString(), image:dataUrl, date:Date.now()});
         saveLocal();
         loadPhotos();
       }
@@ -700,20 +827,36 @@ async function loadPhotos(){
   const empty = document.getElementById('photoEmpty');
   const render = (photos)=>{
     empty.style.display = photos.length? 'none':'block';
-    grid.innerHTML = photos.map(p=>`<img src="${p.image}">`).join('');
+    grid.innerHTML = photos.map(p=>`
+      <div class="photo-card">
+        <img src="${p.image}">
+        <button class="delete-btn-photo" onclick="deletePhoto('${p.id}')">✕</button>
+      </div>
+    `).join('');
   };
 
   if(firebaseReady){
     db.collection('photos').orderBy('date','desc').onSnapshot(snap=>{
-      render(snap.docs.map(d=>d.data()));
+      render(snap.docs.map(d=>({ id: d.id, ...d.data() })));
     });
   }else{
     render(localFallback.photos);
   }
 }
 
+async function deletePhoto(id) {
+  if(!confirm("Supprimer cette photo ?")) return;
+  if(firebaseReady){
+    await db.collection('photos').doc(id).delete();
+  }else{
+    localFallback.photos = localFallback.photos.filter(p=>p.id !== id);
+    saveLocal();
+    loadPhotos();
+  }
+}
+
 /* =========================================================
-   7) Idées musique / activités
+   8) Idées musique / activités
    ========================================================= */
 document.getElementById('ideaSubmit').addEventListener('click', async ()=>{
   const type = document.getElementById('ideaType').value;
@@ -727,7 +870,7 @@ document.getElementById('ideaSubmit').addEventListener('click', async ()=>{
       type, texte:text, nom:who, date: firebase.firestore.FieldValue.serverTimestamp()
     });
   }else{
-    localFallback.ideas.unshift({type, texte:text, nom:who, date:Date.now()});
+    localFallback.ideas.unshift({id: Date.now().toString(), type, texte:text, nom:who, date:Date.now()});
     saveLocal();
     loadIdeas();
   }
@@ -744,18 +887,52 @@ async function loadIdeas(){
         <span class="tag">${i.type==='Musique'?'🎵 Musique':'🎉 Activité'}</span>
         <div>${i.texte}</div>
         <div class="who">proposé par ${i.nom}</div>
+        <button class="delete-btn" style="position:absolute; top:12px; right:12px;" onclick="deleteIdea('${i.id}')">Supprimer</button>
       </li>
     `).join('');
   };
 
   if(firebaseReady){
     db.collection('idees').orderBy('date','desc').onSnapshot(snap=>{
-      render(snap.docs.map(d=>d.data()));
+      render(snap.docs.map(d=>({ id: d.id, ...d.data() })));
     });
   }else{
     render(localFallback.ideas);
   }
 }
+
+async function deleteIdea(id) {
+  if(!confirm("Supprimer cette idée ?")) return;
+  if(firebaseReady){
+    await db.collection('idees').doc(id).delete();
+  }else{
+    localFallback.ideas = localFallback.ideas.filter(i=>i.id !== id);
+    saveLocal();
+    loadIdeas();
+  }
+}
+
+/* =========================================================
+   9) Connexion Administration
+   ========================================================= */
+const ADMIN_PASSWORD = "admin123"; // 🔑 Mot de passe Admin à modifier si souhaité
+
+document.getElementById('adminBtn').addEventListener('click', ()=>{
+  if(document.body.classList.contains('is-admin')){
+    document.body.classList.remove('is-admin');
+    document.getElementById('adminBtn').textContent = "🔒 Admin";
+    alert("Mode administrateur désactivé.");
+  } else {
+    const pwd = prompt("Entrez le mot de passe administrateur :");
+    if(pwd === ADMIN_PASSWORD) {
+      document.body.classList.add('is-admin');
+      document.getElementById('adminBtn').textContent = "🔓 Admin Actif";
+      alert("Mode administrateur activé. Vous pouvez maintenant supprimer des invités, photos ou idées.");
+    } else if(pwd !== null) {
+      alert("Mot de passe incorrect.");
+    }
+  }
+});
 </script>
 </body>
 </html>
