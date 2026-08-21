@@ -1,0 +1,600 @@
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+ 
+<style>
+  :root{
+    --pine:#1f3b2c;
+    --pine-dark:#132720;
+    --gold:#c9a227;
+    --gold-light:#e4c766;
+    --blush:#e8c4b8;
+    --paper:#f6f1e4;
+    --ink:#241f19;
+    --line: rgba(36,31,25,0.15);
+    --radius: 18px;
+    --shadow: 0 20px 50px rgba(19,39,32,0.25);
+  }
+ 
+  @font-face{ /* system fallback stack used below, no external font files needed beyond the two imports */ }
+ 
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--paper);
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(201,162,39,0.10), transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(31,59,44,0.08), transparent 40%);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+  }
+ 
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,600&family=Caveat:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+  body{font-family:'Inter',sans-serif;}
+  h1,h2,.display{font-family:'Playfair Display', Georgia, serif;}
+  .script{font-family:'Caveat', cursive;}
+ 
+  .stage{
+    width:100%;
+    max-width:520px;
+    padding:28px 18px 60px;
+    box-sizing:border-box;
+  }
+ 
+  .card{
+    background: var(--paper);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    overflow:hidden;
+    position:relative;
+  }
+ 
+  /* ---------- ECRAN 1 : sceau / invitation fermée ---------- */
+  .seal-wrap{
+    background: linear-gradient(160deg, var(--pine) 0%, var(--pine-dark) 100%);
+    padding: 64px 28px 56px;
+    text-align:center;
+    color: var(--blush);
+  }
+  .eyebrow{
+    letter-spacing: 3px;
+    text-transform:uppercase;
+    font-size:12px;
+    color: var(--gold-light);
+    margin-bottom: 18px;
+  }
+  .seal{
+    width: 148px; height:148px;
+    margin: 0 auto 26px;
+    border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, var(--gold-light), var(--gold) 60%, #a9821c 100%);
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35), inset 0 2px 4px rgba(255,255,255,0.4);
+    cursor:pointer;
+    transition: transform .35s ease;
+    border: 3px solid rgba(36,31,25,0.15);
+  }
+  .seal:hover{ transform: scale(1.04) rotate(-2deg); }
+  .seal .num{ font-family:'Playfair Display',serif; font-size:44px; font-weight:700; color: var(--pine-dark); line-height:1; }
+  .seal .sub{ font-family:'Playfair Display',serif; font-size:13px; letter-spacing:2px; color: var(--pine-dark); margin-top:2px; }
+ 
+  .seal-title{ font-size: 26px; color: var(--paper); margin: 6px 0 4px; }
+  .seal-hint{ font-size:14px; color: var(--blush); opacity:.85; }
+ 
+  /* ---------- ECRAN 2 : détails + réponse ---------- */
+  .details{ padding: 34px 28px 30px; display:none; }
+  .details.show{ display:block; animation: rise .5s ease; }
+  @keyframes rise{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+ 
+  .lead{ text-align:center; color: var(--pine); font-size:13px; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px;}
+  .headline{ text-align:center; font-size:30px; color:var(--ink); margin:0 0 4px; }
+  .headline .script{ color: var(--gold); display:block; font-size:38px; margin-top:-4px;}
+ 
+  .fact-grid{
+    margin: 26px 0;
+    display:grid;
+    gap: 14px;
+  }
+  .fact{
+    display:flex; gap:14px; align-items:flex-start;
+    padding: 14px 16px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+  .fact .ico{
+    width:34px; height:34px; flex:none;
+    border-radius:50%;
+    background: var(--pine);
+    color: var(--paper);
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px;
+  }
+  .fact .label{ font-size:11px; text-transform:uppercase; letter-spacing:1.5px; color:#8a8072; margin-bottom:2px;}
+  .fact .value{ font-size:15px; font-weight:600; color:var(--ink); }
+  .fact .value small{ display:block; font-weight:400; color:#5b5348; font-size:13px; margin-top:2px;}
+ 
+  .name-field{ margin: 22px 0 16px; }
+  .name-field label{ display:block; font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:#8a8072; margin-bottom:6px;}
+  .name-field input{
+    width:100%; box-sizing:border-box;
+    padding: 13px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    font-size:16px;
+    font-family:'Inter',sans-serif;
+    background:white;
+  }
+  .name-field input:focus{ outline: 2px solid var(--gold); border-color:var(--gold);}
+ 
+  .rsvp-row{ display:flex; gap:12px; margin-top: 8px;}
+  .btn{
+    flex:1;
+    padding: 15px 10px;
+    border-radius: 12px;
+    border:none;
+    font-size:16px;
+    font-weight:600;
+    font-family:'Inter',sans-serif;
+    cursor:pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:active{ transform: scale(0.97); }
+  .btn:disabled{ opacity:.5; cursor:not-allowed; }
+  .btn-yes{ background: var(--pine); color: var(--paper); }
+  .btn-yes:hover{ box-shadow: 0 8px 18px rgba(31,59,44,0.3); }
+  .btn-no{ background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+  .btn-no:hover{ border-color: var(--ink); }
+  .rsvp-error{ color:#a13a2f; font-size:13px; text-align:center; margin-top:10px; display:none;}
+ 
+  /* ---------- ECRAN "dommage" ---------- */
+  .sadscreen{ display:none; padding: 70px 30px; text-align:center; }
+  .sadscreen.show{ display:block; animation: rise .5s ease; }
+  .sadscreen .script{ font-size:40px; color: var(--pine); }
+  .sadscreen p{ color:#5b5348; line-height:1.6; }
+ 
+  /* ---------- SITE PRINCIPAL ---------- */
+  .site{ display:none; }
+  .site.show{ display:block; animation: rise .5s ease; }
+  .site-header{
+    background: linear-gradient(160deg, var(--pine) 0%, var(--pine-dark) 100%);
+    color: var(--paper);
+    padding: 30px 26px 24px;
+    text-align:center;
+  }
+  .site-header .script{ color: var(--gold-light); font-size: 30px; }
+  .site-header h2{ margin:2px 0 0; font-size:22px; }
+  .site-header .addr{ margin-top:10px; font-size:13px; color: var(--blush); }
+ 
+  .tabs{ display:flex; background: white; border-bottom: 1px solid var(--line); position:sticky; top:0; z-index:5; }
+  .tab{
+    flex:1; text-align:center; padding: 14px 4px;
+    font-size:12.5px; font-weight:600; letter-spacing:.3px;
+    color:#8a8072; cursor:pointer; border-bottom:3px solid transparent;
+  }
+  .tab.active{ color: var(--pine); border-bottom-color: var(--gold); }
+ 
+  .panel{ display:none; padding: 22px 22px 34px; }
+  .panel.active{ display:block; }
+ 
+  .section-title{ font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:#8a8072; margin: 0 0 14px; }
+ 
+  .guest-list{ list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+  .guest-list li{
+    display:flex; align-items:center; gap:10px;
+    background:white; border:1px solid var(--line); border-radius:10px;
+    padding: 10px 12px; font-size:14.5px;
+  }
+  .avatar{
+    width:30px;height:30px;border-radius:50%;
+    background: var(--gold); color: var(--pine-dark);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700; font-size:13px; flex:none;
+  }
+  .empty-state{ color:#8a8072; font-size:14px; text-align:center; padding: 24px 10px; }
+ 
+  .upload-zone{
+    border: 1.5px dashed var(--line);
+    border-radius: 14px;
+    padding: 26px 16px;
+    text-align:center;
+    background: white;
+    cursor:pointer;
+    margin-bottom: 18px;
+  }
+  .upload-zone:hover{ border-color: var(--gold); }
+  .upload-zone input{ display:none; }
+  .upload-zone .u-ico{ font-size:26px; margin-bottom:6px; }
+  .upload-zone .u-txt{ font-size:13.5px; color:#5b5348; }
+ 
+  .photo-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+  .photo-grid img{ width:100%; aspect-ratio: 1/1; object-fit:cover; border-radius:10px; border:1px solid var(--line); }
+ 
+  .idea-form{ display:grid; gap:10px; margin-bottom: 22px; }
+  .idea-form select, .idea-form input, .idea-form textarea{
+    padding: 12px 13px; border-radius:10px; border:1px solid var(--line);
+    font-family:'Inter',sans-serif; font-size:14.5px; box-sizing:border-box; width:100%;
+    background:white;
+  }
+  .idea-form textarea{ resize:vertical; min-height:64px; }
+  .idea-form button{
+    background: var(--pine); color: var(--paper); border:none; border-radius:10px;
+    padding: 12px; font-weight:600; cursor:pointer; font-size:14.5px;
+  }
+ 
+  .idea-list{ list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+  .idea-list li{
+    background:white; border:1px solid var(--line); border-radius:10px;
+    padding: 12px 14px;
+  }
+  .idea-list .tag{
+    display:inline-block; font-size:10.5px; text-transform:uppercase; letter-spacing:1px;
+    background: var(--blush); color:#5b2a1f; padding:2px 8px; border-radius:20px; margin-bottom:6px;
+  }
+  .idea-list .who{ font-size:12px; color:#8a8072; margin-top:4px; }
+ 
+  .footer-note{ text-align:center; font-size:11.5px; color:#a89f8f; padding: 10px 24px 26px; }
+ 
+  @media (max-width:400px){
+    .headline{ font-size:26px; }
+    .seal{ width:128px; height:128px; }
+  }
+</style>
+</head>
+<body>
+ 
+<div class="stage">
+  <div class="card">
+ 
+    <!-- ECRAN 1 : le sceau à cliquer -->
+    <div class="seal-wrap" id="screenSeal">
+      <div class="eyebrow">Une invitation vous attend</div>
+      <div class="seal" id="sealBtn">
+        <div class="num">40</div>
+        <div class="sub">ANS</div>
+      </div>
+      <div class="seal-title script">Cliquez pour ouvrir</div>
+      <div class="seal-hint">Une enveloppe à décacheter</div>
+    </div>
+ 
+    <!-- ECRAN 2 : détails + réponse -->
+    <div class="details" id="screenDetails">
+      <div class="lead">Vous êtes invité·e</div>
+      <h1 class="headline">On fête les 40 ans<span class="script">tous ensemble</span></h1>
+ 
+      <div class="fact-grid">
+        <div class="fact">
+          <div class="ico">📅</div>
+          <div>
+            <div class="label">Dates</div>
+            <div class="value">26 → 27 septembre</div>
+          </div>
+        </div>
+        <div class="fact">
+          <div class="ico">🕚</div>
+          <div>
+            <div class="label">Ça commence</div>
+            <div class="value">Samedi, 11h00</div>
+          </div>
+        </div>
+        <div class="fact">
+          <div class="ico">📍</div>
+          <div>
+            <div class="label">Chez</div>
+            <div class="value">Johanna &amp; Paul
+              <small>3 rue du Ried, Hagenthal-le-Bas</small>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="name-field">
+        <label for="guestName">Votre prénom (et nom)</label>
+        <input type="text" id="guestName" placeholder="Ex : Sophie M.">
+      </div>
+ 
+      <div class="rsvp-row">
+        <button class="btn btn-no" id="btnNo">Je ne pourrai pas venir</button>
+        <button class="btn btn-yes" id="btnYes">Je viens !</button>
+      </div>
+      <div class="rsvp-error" id="rsvpError">Merci d'indiquer votre prénom d'abord 🙂</div>
+    </div>
+ 
+    <!-- ECRAN "dommage" -->
+    <div class="sadscreen" id="screenSad">
+      <div class="script">Dommage !</div>
+      <h2 style="margin-top:4px;">On espère vous voir la prochaine fois</h2>
+      <p>Merci d'avoir répondu — ça aide beaucoup pour l'organisation. On pense fort à vous, on vous racontera tout !</p>
+    </div>
+ 
+    <!-- SITE PRINCIPAL (après un "oui") -->
+    <div class="site" id="screenSite">
+      <div class="site-header">
+        <div class="script">C'est noté !</div>
+        <h2 id="welcomeName">Bienvenue</h2>
+        <div class="addr">26–27 sept · Samedi 11h · 3 rue du Ried, Hagenthal-le-Bas</div>
+      </div>
+ 
+      <div class="tabs">
+        <div class="tab active" data-tab="guests">Qui vient</div>
+        <div class="tab" data-tab="photos">Photos</div>
+        <div class="tab" data-tab="ideas">Idées</div>
+      </div>
+ 
+      <!-- QUI VIENT -->
+      <div class="panel active" id="panel-guests">
+        <div class="section-title">Invité·e·s confirmé·e·s</div>
+        <ul class="guest-list" id="guestListEl">
+          <li class="empty-state" style="border:none;">Chargement…</li>
+        </ul>
+      </div>
+ 
+      <!-- PHOTOS -->
+      <div class="panel" id="panel-photos">
+        <div class="section-title">Ajouter une photo</div>
+        <label class="upload-zone" for="photoInput">
+          <div class="u-ico">📷</div>
+          <div class="u-txt">Toucher pour choisir une photo</div>
+          <input type="file" accept="image/*" id="photoInput">
+        </label>
+        <div class="section-title">La galerie</div>
+        <div class="photo-grid" id="photoGrid"></div>
+        <div class="empty-state" id="photoEmpty">Pas encore de photo — soyez le premier !</div>
+      </div>
+ 
+      <!-- IDEES -->
+      <div class="panel" id="panel-ideas">
+        <div class="section-title">Proposer une idée</div>
+        <div class="idea-form">
+          <select id="ideaType">
+            <option value="Musique">🎵 Une chanson / un artiste</option>
+            <option value="Activité">🎉 Une idée d'activité ou de jeu</option>
+          </select>
+          <input type="text" id="ideaText" placeholder="Ex : Stromae — Alors on danse">
+          <button id="ideaSubmit">Ajouter à la liste</button>
+        </div>
+        <div class="section-title">Ce qui a été proposé</div>
+        <ul class="idea-list" id="ideaListEl"></ul>
+        <div class="empty-state" id="ideaEmpty">Aucune idée pour l'instant, lancez le mouvement !</div>
+      </div>
+ 
+      <div class="footer-note">Fait avec ❤️ pour les 40 ans</div>
+    </div>
+ 
+  </div>
+</div>
+ 
+<script>
+/* =========================================================
+   1) CONFIGURATION FIREBASE — remplacez le bloc ci-dessous
+      par celui copié depuis votre console Firebase.
+   ========================================================= */
+const firebaseConfig = {
+  // COLLEZ ICI l'objet copié depuis la console Firebase, par exemple :
+  // apiKey: "AIza...",
+  // authDomain: "anniv-tata.firebaseapp.com",
+  // projectId: "anniv-tata",
+  // storageBucket: "anniv-tata.appspot.com",
+  // messagingSenderId: "...",
+  // appId: "..."
+};
+ 
+let db = null;
+let firebaseReady = false;
+try{
+  if(firebaseConfig.projectId){
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    firebaseReady = true;
+  }
+}catch(e){ console.warn("Firebase non configuré :", e); }
+ 
+/* =========================================================
+   2) Fallback local (si Firebase n'est pas configuré) :
+      tout fonctionne sur CE navigateur uniquement, à titre
+      de démo, sans partage entre invités.
+   ========================================================= */
+const localFallback = {
+  guests: JSON.parse(localStorage.getItem('fb_guests')||'[]'),
+  photos: JSON.parse(localStorage.getItem('fb_photos')||'[]'),
+  ideas: JSON.parse(localStorage.getItem('fb_ideas')||'[]'),
+};
+function saveLocal(){
+  localStorage.setItem('fb_guests', JSON.stringify(localFallback.guests));
+  localStorage.setItem('fb_photos', JSON.stringify(localFallback.photos));
+  localStorage.setItem('fb_ideas', JSON.stringify(localFallback.ideas));
+}
+ 
+/* =========================================================
+   3) Navigation entre écrans
+   ========================================================= */
+const screenSeal = document.getElementById('screenSeal');
+const screenDetails = document.getElementById('screenDetails');
+const screenSad = document.getElementById('screenSad');
+const screenSite = document.getElementById('screenSite');
+ 
+document.getElementById('sealBtn').addEventListener('click', ()=>{
+  screenSeal.style.display = 'none';
+  screenDetails.classList.add('show');
+});
+ 
+const nameInput = document.getElementById('guestName');
+const rsvpError = document.getElementById('rsvpError');
+ 
+document.getElementById('btnNo').addEventListener('click', async ()=>{
+  const name = nameInput.value.trim();
+  if(!name){ rsvpError.style.display='block'; return; }
+  rsvpError.style.display='none';
+  await recordResponse(name, false);
+  screenDetails.classList.remove('show');
+  screenSad.classList.add('show');
+});
+ 
+document.getElementById('btnYes').addEventListener('click', async ()=>{
+  const name = nameInput.value.trim();
+  if(!name){ rsvpError.style.display='block'; return; }
+  rsvpError.style.display='none';
+  await recordResponse(name, true);
+  document.getElementById('welcomeName').textContent = 'Bienvenue, ' + name + ' !';
+  screenDetails.classList.remove('show');
+  screenSite.classList.add('show');
+  loadGuests();
+  loadPhotos();
+  loadIdeas();
+});
+ 
+async function recordResponse(name, coming){
+  if(firebaseReady){
+    await db.collection('reponses').add({
+      nom: name, vient: coming, date: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }else{
+    localFallback.guests.push({nom:name, vient:coming, date: Date.now()});
+    saveLocal();
+  }
+}
+ 
+/* =========================================================
+   4) Onglets du site principal
+   ========================================================= */
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-'+tab.dataset.tab).classList.add('active');
+  });
+});
+ 
+/* =========================================================
+   5) Qui vient
+   ========================================================= */
+function initials(name){
+  return name.trim().split(/\s+/).slice(0,2).map(w=>w[0]?.toUpperCase()||'').join('');
+}
+ 
+async function loadGuests(){
+  const listEl = document.getElementById('guestListEl');
+  const render = (guests)=>{
+    const yes = guests.filter(g=>g.vient);
+    if(yes.length===0){
+      listEl.innerHTML = '<li class="empty-state" style="border:none;">Personne pour l\'instant — vous êtes les premiers 🎉</li>';
+      return;
+    }
+    listEl.innerHTML = yes.map(g=>`<li><div class="avatar">${initials(g.nom)}</div>${g.nom}</li>`).join('');
+  };
+ 
+  if(firebaseReady){
+    db.collection('reponses').onSnapshot(snap=>{
+      const guests = snap.docs.map(d=>d.data());
+      render(guests);
+    });
+  }else{
+    render(localFallback.guests);
+  }
+}
+ 
+/* =========================================================
+   6) Photos
+   ========================================================= */
+const photoInput = document.getElementById('photoInput');
+photoInput.addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (evt)=>{
+    const img = new Image();
+    img.onload = async ()=>{
+      // Redimensionne pour rester léger
+      const maxW = 900;
+      const scale = Math.min(1, maxW/img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width*scale;
+      canvas.height = img.height*scale;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+ 
+      if(firebaseReady){
+        await db.collection('photos').add({
+          image: dataUrl, date: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }else{
+        localFallback.photos.unshift({image:dataUrl, date:Date.now()});
+        saveLocal();
+        loadPhotos();
+      }
+    };
+    img.src = evt.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+ 
+async function loadPhotos(){
+  const grid = document.getElementById('photoGrid');
+  const empty = document.getElementById('photoEmpty');
+  const render = (photos)=>{
+    empty.style.display = photos.length? 'none':'block';
+    grid.innerHTML = photos.map(p=>`<img src="${p.image}">`).join('');
+  };
+ 
+  if(firebaseReady){
+    db.collection('photos').orderBy('date','desc').onSnapshot(snap=>{
+      render(snap.docs.map(d=>d.data()));
+    });
+  }else{
+    render(localFallback.photos);
+  }
+}
+ 
+/* =========================================================
+   7) Idées musique / activités
+   ========================================================= */
+document.getElementById('ideaSubmit').addEventListener('click', async ()=>{
+  const type = document.getElementById('ideaType').value;
+  const textEl = document.getElementById('ideaText');
+  const text = textEl.value.trim();
+  if(!text) return;
+  const who = nameInput.value.trim() || 'Anonyme';
+ 
+  if(firebaseReady){
+    await db.collection('idees').add({
+      type, texte:text, nom:who, date: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }else{
+    localFallback.ideas.unshift({type, texte:text, nom:who, date:Date.now()});
+    saveLocal();
+    loadIdeas();
+  }
+  textEl.value='';
+});
+ 
+async function loadIdeas(){
+  const listEl = document.getElementById('ideaListEl');
+  const empty = document.getElementById('ideaEmpty');
+  const render = (ideas)=>{
+    empty.style.display = ideas.length? 'none':'block';
+    listEl.innerHTML = ideas.map(i=>`
+      <li>
+        <span class="tag">${i.type==='Musique'?'🎵 Musique':'🎉 Activité'}</span>
+        <div>${i.texte}</div>
+        <div class="who">proposé par ${i.nom}</div>
+      </li>
+    `).join('');
+  };
+ 
+  if(firebaseReady){
+    db.collection('idees').orderBy('date','desc').onSnapshot(snap=>{
+      render(snap.docs.map(d=>d.data()));
+    });
+  }else{
+    render(localFallback.ideas);
+  }
+}
+</script>
+</body>
+</html>
