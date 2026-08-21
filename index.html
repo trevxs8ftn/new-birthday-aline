@@ -1,255 +1,421 @@
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
- 
-<style>
-  :root{
-    --pine:#1f3b2c;
-    --pine-dark:#132720;
-    --gold:#c9a227;
-    --gold-light:#e4c766;
-    --blush:#e8c4b8;
-    --paper:#f6f1e4;
-    --ink:#241f19;
-    --line: rgba(36,31,25,0.15);
-    --radius: 18px;
-    --shadow: 0 20px 50px rgba(19,39,32,0.25);
-  }
- 
-  @font-face{ /* system fallback stack used below, no external font files needed beyond the two imports */ }
- 
-  html,body{margin:0;padding:0;}
-  body{
-    background: var(--paper);
-    background-image:
-      radial-gradient(circle at 15% 10%, rgba(201,162,39,0.10), transparent 45%),
-      radial-gradient(circle at 85% 85%, rgba(31,59,44,0.08), transparent 40%);
-    color: var(--ink);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    min-height:100vh;
-    display:flex;
-    align-items:flex-start;
-    justify-content:center;
-  }
- 
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,600&family=Caveat:wght@600;700&family=Inter:wght@400;500;600&display=swap');
-  body{font-family:'Inter',sans-serif;}
-  h1,h2,.display{font-family:'Playfair Display', Georgia, serif;}
-  .script{font-family:'Caveat', cursive;}
- 
-  .stage{
-    width:100%;
-    max-width:520px;
-    padding:28px 18px 60px;
-    box-sizing:border-box;
-  }
- 
-  .card{
-    background: var(--paper);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    border: 1px solid var(--line);
-    overflow:hidden;
-    position:relative;
-  }
- 
-  /* ---------- ECRAN 1 : sceau / invitation fermée ---------- */
-  .seal-wrap{
-    background: linear-gradient(160deg, var(--pine) 0%, var(--pine-dark) 100%);
-    padding: 64px 28px 56px;
-    text-align:center;
-    color: var(--blush);
-  }
-  .eyebrow{
-    letter-spacing: 3px;
-    text-transform:uppercase;
-    font-size:12px;
-    color: var(--gold-light);
-    margin-bottom: 18px;
-  }
-  .seal{
-    width: 148px; height:148px;
-    margin: 0 auto 26px;
-    border-radius:50%;
-    background: radial-gradient(circle at 35% 30%, var(--gold-light), var(--gold) 60%, #a9821c 100%);
-    display:flex; align-items:center; justify-content:center;
-    flex-direction:column;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.35), inset 0 2px 4px rgba(255,255,255,0.4);
-    cursor:pointer;
-    transition: transform .35s ease;
-    border: 3px solid rgba(36,31,25,0.15);
-  }
-  .seal:hover{ transform: scale(1.04) rotate(-2deg); }
-  .seal .num{ font-family:'Playfair Display',serif; font-size:44px; font-weight:700; color: var(--pine-dark); line-height:1; }
-  .seal .sub{ font-family:'Playfair Display',serif; font-size:13px; letter-spacing:2px; color: var(--pine-dark); margin-top:2px; }
- 
-  .seal-title{ font-size: 26px; color: var(--paper); margin: 6px 0 4px; }
-  .seal-hint{ font-size:14px; color: var(--blush); opacity:.85; }
- 
-  /* ---------- ECRAN 2 : détails + réponse ---------- */
-  .details{ padding: 34px 28px 30px; display:none; }
-  .details.show{ display:block; animation: rise .5s ease; }
-  @keyframes rise{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
- 
-  .lead{ text-align:center; color: var(--pine); font-size:13px; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px;}
-  .headline{ text-align:center; font-size:30px; color:var(--ink); margin:0 0 4px; }
-  .headline .script{ color: var(--gold); display:block; font-size:38px; margin-top:-4px;}
- 
-  .fact-grid{
-    margin: 26px 0;
-    display:grid;
-    gap: 14px;
-  }
-  .fact{
-    display:flex; gap:14px; align-items:flex-start;
-    padding: 14px 16px;
-    background: white;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-  }
-  .fact .ico{
-    width:34px; height:34px; flex:none;
-    border-radius:50%;
-    background: var(--pine);
-    color: var(--paper);
-    display:flex; align-items:center; justify-content:center;
-    font-size:16px;
-  }
-  .fact .label{ font-size:11px; text-transform:uppercase; letter-spacing:1.5px; color:#8a8072; margin-bottom:2px;}
-  .fact .value{ font-size:15px; font-weight:600; color:var(--ink); }
-  .fact .value small{ display:block; font-weight:400; color:#5b5348; font-size:13px; margin-top:2px;}
- 
-  .name-field{ margin: 22px 0 16px; }
-  .name-field label{ display:block; font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:#8a8072; margin-bottom:6px;}
-  .name-field input{
-    width:100%; box-sizing:border-box;
-    padding: 13px 14px;
-    border-radius: 10px;
-    border: 1px solid var(--line);
-    font-size:16px;
-    font-family:'Inter',sans-serif;
-    background:white;
-  }
-  .name-field input:focus{ outline: 2px solid var(--gold); border-color:var(--gold);}
- 
-  .rsvp-row{ display:flex; gap:12px; margin-top: 8px;}
-  .btn{
-    flex:1;
-    padding: 15px 10px;
-    border-radius: 12px;
-    border:none;
-    font-size:16px;
-    font-weight:600;
-    font-family:'Inter',sans-serif;
-    cursor:pointer;
-    transition: transform .15s ease, box-shadow .15s ease;
-  }
-  .btn:active{ transform: scale(0.97); }
-  .btn:disabled{ opacity:.5; cursor:not-allowed; }
-  .btn-yes{ background: var(--pine); color: var(--paper); }
-  .btn-yes:hover{ box-shadow: 0 8px 18px rgba(31,59,44,0.3); }
-  .btn-no{ background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
-  .btn-no:hover{ border-color: var(--ink); }
-  .rsvp-error{ color:#a13a2f; font-size:13px; text-align:center; margin-top:10px; display:none;}
- 
-  /* ---------- ECRAN "dommage" ---------- */
-  .sadscreen{ display:none; padding: 70px 30px; text-align:center; }
-  .sadscreen.show{ display:block; animation: rise .5s ease; }
-  .sadscreen .script{ font-size:40px; color: var(--pine); }
-  .sadscreen p{ color:#5b5348; line-height:1.6; }
- 
-  /* ---------- SITE PRINCIPAL ---------- */
-  .site{ display:none; }
-  .site.show{ display:block; animation: rise .5s ease; }
-  .site-header{
-    background: linear-gradient(160deg, var(--pine) 0%, var(--pine-dark) 100%);
-    color: var(--paper);
-    padding: 30px 26px 24px;
-    text-align:center;
-  }
-  .site-header .script{ color: var(--gold-light); font-size: 30px; }
-  .site-header h2{ margin:2px 0 0; font-size:22px; }
-  .site-header .addr{ margin-top:10px; font-size:13px; color: var(--blush); }
- 
-  .tabs{ display:flex; background: white; border-bottom: 1px solid var(--line); position:sticky; top:0; z-index:5; }
-  .tab{
-    flex:1; text-align:center; padding: 14px 4px;
-    font-size:12.5px; font-weight:600; letter-spacing:.3px;
-    color:#8a8072; cursor:pointer; border-bottom:3px solid transparent;
-  }
-  .tab.active{ color: var(--pine); border-bottom-color: var(--gold); }
- 
-  .panel{ display:none; padding: 22px 22px 34px; }
-  .panel.active{ display:block; }
- 
-  .section-title{ font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:#8a8072; margin: 0 0 14px; }
- 
-  .guest-list{ list-style:none; margin:0; padding:0; display:grid; gap:10px; }
-  .guest-list li{
-    display:flex; align-items:center; gap:10px;
-    background:white; border:1px solid var(--line); border-radius:10px;
-    padding: 10px 12px; font-size:14.5px;
-  }
-  .avatar{
-    width:30px;height:30px;border-radius:50%;
-    background: var(--gold); color: var(--pine-dark);
-    display:flex;align-items:center;justify-content:center;
-    font-weight:700; font-size:13px; flex:none;
-  }
-  .empty-state{ color:#8a8072; font-size:14px; text-align:center; padding: 24px 10px; }
- 
-  .upload-zone{
-    border: 1.5px dashed var(--line);
-    border-radius: 14px;
-    padding: 26px 16px;
-    text-align:center;
-    background: white;
-    cursor:pointer;
-    margin-bottom: 18px;
-  }
-  .upload-zone:hover{ border-color: var(--gold); }
-  .upload-zone input{ display:none; }
-  .upload-zone .u-ico{ font-size:26px; margin-bottom:6px; }
-  .upload-zone .u-txt{ font-size:13.5px; color:#5b5348; }
- 
-  .photo-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
-  .photo-grid img{ width:100%; aspect-ratio: 1/1; object-fit:cover; border-radius:10px; border:1px solid var(--line); }
- 
-  .idea-form{ display:grid; gap:10px; margin-bottom: 22px; }
-  .idea-form select, .idea-form input, .idea-form textarea{
-    padding: 12px 13px; border-radius:10px; border:1px solid var(--line);
-    font-family:'Inter',sans-serif; font-size:14.5px; box-sizing:border-box; width:100%;
-    background:white;
-  }
-  .idea-form textarea{ resize:vertical; min-height:64px; }
-  .idea-form button{
-    background: var(--pine); color: var(--paper); border:none; border-radius:10px;
-    padding: 12px; font-weight:600; cursor:pointer; font-size:14.5px;
-  }
- 
-  .idea-list{ list-style:none; margin:0; padding:0; display:grid; gap:10px; }
-  .idea-list li{
-    background:white; border:1px solid var(--line); border-radius:10px;
-    padding: 12px 14px;
-  }
-  .idea-list .tag{
-    display:inline-block; font-size:10.5px; text-transform:uppercase; letter-spacing:1px;
-    background: var(--blush); color:#5b2a1f; padding:2px 8px; border-radius:20px; margin-bottom:6px;
-  }
-  .idea-list .who{ font-size:12px; color:#8a8072; margin-top:4px; }
- 
-  .footer-note{ text-align:center; font-size:11.5px; color:#a89f8f; padding: 10px 24px 26px; }
- 
-  @media (max-width:400px){
-    .headline{ font-size:26px; }
-    .seal{ width:128px; height:128px; }
-  }
-</style>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invitation 40 ans</title>
+  
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --pine: #0f2d22;
+      --pine-light: #1d4335;
+      --gold: #d4af37;
+      --gold-light: #f3e5ab;
+      --gold-glow: rgba(212, 175, 55, 0.35);
+      --bg: #091712;
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --ink: #1c2321;
+      --ink-muted: #64748b;
+      --line: rgba(15, 45, 34, 0.08);
+      --radius-lg: 28px;
+      --radius-md: 16px;
+      --shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 40px rgba(212, 175, 55, 0.15);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    
+    body {
+      background: var(--bg);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(29, 67, 53, 0.6), transparent 70%),
+        radial-gradient(circle at 85% 90%, rgba(212, 175, 55, 0.12), transparent 50%);
+      color: var(--ink);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 12px;
+    }
+
+    h1, h2, .display { font-family: 'Playfair Display', serif; }
+    .script { font-family: 'Caveat', cursive; }
+
+    .stage {
+      width: 100%;
+      max-width: 480px;
+      perspective: 1000px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-premium);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      overflow: hidden;
+      position: relative;
+      backdrop-filter: blur(20px);
+    }
+
+    /* ---------- ECRAN 1 : SCEAU ---------- */
+    .seal-wrap {
+      background: linear-gradient(160deg, #133327 0%, #081a13 100%);
+      padding: 64px 28px 56px;
+      text-align: center;
+      color: #e2e8f0;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .seal-wrap::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gold);
+      margin-bottom: 24px;
+    }
+
+    .seal {
+      width: 140px; 
+      height: 140px;
+      margin: 0 auto 30px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fef3c7, #d4af37 55%, #855812 100%);
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      flex-direction: column;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.4), 0 0 20px var(--gold-glow);
+      cursor: pointer;
+      transition: all .4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      position: relative;
+    }
+
+    .seal:hover { 
+      transform: scale(1.06) rotate(-3deg); 
+      box-shadow: 0 16px 36px rgba(0,0,0,0.5), 0 0 30px var(--gold-glow);
+    }
+
+    .seal .num { 
+      font-family: 'Playfair Display', serif; 
+      font-size: 46px; 
+      font-weight: 700; 
+      color: var(--pine); 
+      line-height: 0.9;
+    }
+    .seal .sub { 
+      font-family: 'Playfair Display', serif; 
+      font-size: 12px; 
+      letter-spacing: 3px; 
+      color: var(--pine); 
+      font-weight: 600;
+      margin-top: 4px; 
+    }
+
+    .seal-title { font-size: 28px; color: #fff; margin: 6px 0 4px; }
+    .seal-hint { font-size: 14px; color: #94a3b8; font-weight: 400; }
+
+    /* ---------- ECRAN 2 : DETAILS ---------- */
+    .details { padding: 40px 28px 36px; display: none; }
+    .details.show { display: block; animation: rise .6s cubic-bezier(0.16, 1, 0.3, 1); }
+
+    @keyframes rise { 
+      from { opacity: 0; transform: translateY(20px) scale(0.98); } 
+      to { opacity: 1; transform: translateY(0) scale(1); } 
+    }
+
+    .lead { 
+      text-align: center; 
+      color: var(--gold); 
+      font-size: 11px; 
+      font-weight: 700;
+      letter-spacing: 3px; 
+      text-transform: uppercase; 
+      margin-bottom: 8px;
+    }
+    
+    .headline { 
+      text-align: center; 
+      font-size: 32px; 
+      color: var(--pine); 
+      margin: 0 0 24px; 
+      line-height: 1.15;
+    }
+    .headline .script { 
+      color: var(--gold); 
+      display: block; 
+      font-size: 42px; 
+      margin-top: -2px;
+      font-weight: 600;
+    }
+
+    .fact-grid {
+      margin: 24px 0;
+      display: grid;
+      gap: 12px;
+    }
+    
+    .fact {
+      display: flex; 
+      gap: 16px; 
+      align-items: center;
+      padding: 16px;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      transition: transform 0.2s ease;
+    }
+    .fact:hover { transform: translateX(2px); }
+
+    .fact .ico {
+      width: 42px; 
+      height: 42px; 
+      flex: none;
+      border-radius: 12px;
+      background: #f0fdf4;
+      color: var(--pine);
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      font-size: 18px;
+    }
+    
+    .fact .label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--ink-muted); font-weight: 600; }
+    .fact .value { font-size: 15px; font-weight: 600; color: var(--ink); margin-top: 2px; }
+    .fact .value small { display: block; font-weight: 400; color: var(--ink-muted); font-size: 13px; margin-top: 1px; }
+
+    .name-field { margin: 26px 0 18px; }
+    .name-field label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--ink-muted); font-weight: 600; margin-bottom: 8px; }
+    .name-field input {
+      width: 100%; 
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--line);
+      font-size: 15px;
+      font-family: inherit;
+      background: #ffffff;
+      transition: all 0.2s ease;
+    }
+    .name-field input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15); }
+
+    .rsvp-row { display: flex; gap: 12px; margin-top: 12px; }
+    
+    .btn {
+      flex: 1;
+      padding: 16px 12px;
+      border-radius: var(--radius-md);
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .btn-yes { 
+      background: var(--pine); 
+      color: #ffffff; 
+      box-shadow: 0 8px 20px rgba(15, 45, 34, 0.25);
+    }
+    .btn-yes:hover { background: var(--pine-light); box-shadow: 0 10px 24px rgba(15, 45, 34, 0.35); }
+    
+    .btn-no { 
+      background: transparent; 
+      color: var(--ink); 
+      border: 1.5px solid var(--line); 
+    }
+    .btn-no:hover { border-color: var(--ink); background: rgba(0,0,0,0.02); }
+    
+    .rsvp-error { color: #e11d48; font-size: 13px; text-align: center; margin-top: 12px; font-weight: 500; display: none; }
+
+    /* ---------- ECRAN SAD ---------- */
+    .sadscreen { display: none; padding: 70px 30px; text-align: center; }
+    .sadscreen.show { display: block; animation: rise .6s ease; }
+    .sadscreen .script { font-size: 46px; color: var(--gold); margin-bottom: 8px; }
+    .sadscreen h2 { color: var(--pine); margin: 0 0 12px; font-size: 24px; }
+    .sadscreen p { color: var(--ink-muted); line-height: 1.6; font-size: 15px; }
+
+    /* ---------- SITE PRINCIPAL ---------- */
+    .site { display: none; }
+    .site.show { display: block; animation: rise .6s ease; }
+    
+    .site-header {
+      background: linear-gradient(160deg, var(--pine) 0%, #081a13 100%);
+      color: #ffffff;
+      padding: 36px 26px 28px;
+      text-align: center;
+    }
+    .site-header .script { color: var(--gold-light); font-size: 34px; }
+    .site-header h2 { margin: 4px 0 0; font-size: 24px; font-weight: 600; }
+    .site-header .addr { margin-top: 8px; font-size: 13px; color: #94a3b8; font-weight: 400; }
+
+    .tabs { 
+      display: flex; 
+      background: #ffffff; 
+      border-bottom: 1px solid var(--line); 
+      position: sticky; 
+      top: 0; 
+      z-index: 5; 
+    }
+    .tab {
+      flex: 1; 
+      text-align: center; 
+      padding: 16px 4px;
+      font-size: 13px; 
+      font-weight: 600; 
+      color: var(--ink-muted); 
+      cursor: pointer; 
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+    .tab.active { color: var(--pine); border-bottom-color: var(--gold); }
+
+    .panel { display: none; padding: 26px 22px 36px; }
+    .panel.active { display: block; }
+
+    .section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--ink-muted); font-weight: 700; margin: 0 0 16px; }
+
+    .guest-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+    .guest-list li {
+      display: flex; 
+      align-items: center; 
+      gap: 12px;
+      background: #ffffff; 
+      border: 1px solid var(--line); 
+      border-radius: var(--radius-md);
+      padding: 12px 16px; 
+      font-size: 15px;
+      font-weight: 500;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.01);
+    }
+    
+    .avatar {
+      width: 36px; 
+      height: 36px; 
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold)); 
+      color: var(--pine);
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      font-weight: 700; 
+      font-size: 13px; 
+      flex: none;
+      box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+    }
+    
+    .empty-state { color: var(--ink-muted); font-size: 14px; text-align: center; padding: 32px 10px; }
+
+    .upload-zone {
+      border: 2px dashed var(--line);
+      border-radius: var(--radius-md);
+      padding: 32px 16px;
+      text-align: center;
+      background: #ffffff;
+      cursor: pointer;
+      margin-bottom: 24px;
+      transition: all 0.2s ease;
+      display: block;
+    }
+    .upload-zone:hover { border-color: var(--gold); background: #fffdf5; }
+    .upload-zone input { display: none; }
+    .upload-zone .u-ico { font-size: 32px; margin-bottom: 8px; }
+    .upload-zone .u-txt { font-size: 14px; color: var(--ink-muted); font-weight: 500; }
+
+    .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .photo-grid img { 
+      width: 100%; 
+      aspect-ratio: 1/1; 
+      object-fit: cover; 
+      border-radius: var(--radius-md); 
+      border: 1px solid var(--line); 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+
+    .idea-form { display: grid; gap: 12px; margin-bottom: 26px; }
+    .idea-form select, .idea-form input, .idea-form textarea {
+      padding: 14px 16px; 
+      border-radius: var(--radius-md); 
+      border: 1.5px solid var(--line);
+      font-family: inherit; 
+      font-size: 14.5px; 
+      box-sizing: border-box; 
+      width: 100%;
+      background: #ffffff;
+      transition: all 0.2s ease;
+    }
+    .idea-form select:focus, .idea-form input:focus { outline: none; border-color: var(--gold); }
+    .idea-form button {
+      background: var(--pine); 
+      color: #ffffff; 
+      border: none; 
+      border-radius: var(--radius-md);
+      padding: 14px; 
+      font-weight: 600; 
+      cursor: pointer; 
+      font-size: 15px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(15, 45, 34, 0.15);
+    }
+    .idea-form button:hover { background: var(--pine-light); }
+
+    .idea-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+    .idea-list li {
+      background: #ffffff; 
+      border: 1px solid var(--line); 
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.01);
+    }
+    .idea-list .tag {
+      display: inline-block; 
+      font-size: 10px; 
+      text-transform: uppercase; 
+      letter-spacing: 1px;
+      font-weight: 700;
+      background: #fef3c7; 
+      color: #92400e; 
+      padding: 4px 10px; 
+      border-radius: 20px; 
+      margin-bottom: 8px;
+    }
+    .idea-list .who { font-size: 12px; color: var(--ink-muted); margin-top: 6px; }
+
+    .footer-note { text-align: center; font-size: 12px; color: #94a3b8; padding: 12px 24px 28px; }
+
+    @media (max-width: 400px) {
+      .headline { font-size: 28px; }
+      .seal { width: 120px; height: 120px; }
+      .seal .num { font-size: 38px; }
+    }
+  </style>
 </head>
 <body>
- 
+
 <div class="stage">
   <div class="card">
- 
+
     <!-- ECRAN 1 : le sceau à cliquer -->
     <div class="seal-wrap" id="screenSeal">
       <div class="eyebrow">Une invitation vous attend</div>
@@ -260,12 +426,12 @@
       <div class="seal-title script">Cliquez pour ouvrir</div>
       <div class="seal-hint">Une enveloppe à décacheter</div>
     </div>
- 
+
     <!-- ECRAN 2 : détails + réponse -->
     <div class="details" id="screenDetails">
       <div class="lead">Vous êtes invité·e</div>
       <h1 class="headline">On fête les 40 ans<span class="script">tous ensemble</span></h1>
- 
+
       <div class="fact-grid">
         <div class="fact">
           <div class="ico">📅</div>
@@ -291,26 +457,26 @@
           </div>
         </div>
       </div>
- 
+
       <div class="name-field">
         <label for="guestName">Votre prénom (et nom)</label>
         <input type="text" id="guestName" placeholder="Ex : Sophie M.">
       </div>
- 
+
       <div class="rsvp-row">
         <button class="btn btn-no" id="btnNo">Je ne pourrai pas venir</button>
         <button class="btn btn-yes" id="btnYes">Je viens !</button>
       </div>
       <div class="rsvp-error" id="rsvpError">Merci d'indiquer votre prénom d'abord 🙂</div>
     </div>
- 
+
     <!-- ECRAN "dommage" -->
     <div class="sadscreen" id="screenSad">
       <div class="script">Dommage !</div>
-      <h2 style="margin-top:4px;">On espère vous voir la prochaine fois</h2>
+      <h2>On espère vous voir la prochaine fois</h2>
       <p>Merci d'avoir répondu — ça aide beaucoup pour l'organisation. On pense fort à vous, on vous racontera tout !</p>
     </div>
- 
+
     <!-- SITE PRINCIPAL (après un "oui") -->
     <div class="site" id="screenSite">
       <div class="site-header">
@@ -318,13 +484,13 @@
         <h2 id="welcomeName">Bienvenue</h2>
         <div class="addr">26–27 sept · Samedi 11h · 3 rue du Ried, Hagenthal-le-Bas</div>
       </div>
- 
+
       <div class="tabs">
         <div class="tab active" data-tab="guests">Qui vient</div>
         <div class="tab" data-tab="photos">Photos</div>
         <div class="tab" data-tab="ideas">Idées</div>
       </div>
- 
+
       <!-- QUI VIENT -->
       <div class="panel active" id="panel-guests">
         <div class="section-title">Invité·e·s confirmé·e·s</div>
@@ -332,7 +498,7 @@
           <li class="empty-state" style="border:none;">Chargement…</li>
         </ul>
       </div>
- 
+
       <!-- PHOTOS -->
       <div class="panel" id="panel-photos">
         <div class="section-title">Ajouter une photo</div>
@@ -345,7 +511,7 @@
         <div class="photo-grid" id="photoGrid"></div>
         <div class="empty-state" id="photoEmpty">Pas encore de photo — soyez le premier !</div>
       </div>
- 
+
       <!-- IDEES -->
       <div class="panel" id="panel-ideas">
         <div class="section-title">Proposer une idée</div>
@@ -361,42 +527,38 @@
         <ul class="idea-list" id="ideaListEl"></ul>
         <div class="empty-state" id="ideaEmpty">Aucune idée pour l'instant, lancez le mouvement !</div>
       </div>
- 
+
       <div class="footer-note">Fait avec ❤️ pour les 40 ans</div>
     </div>
- 
+
   </div>
 </div>
- 
+
 <script>
 /* =========================================================
-   1) CONFIGURATION FIREBASE — remplacez le bloc ci-dessous
-      par celui copié depuis votre console Firebase.
+   1) CONFIGURATION FIREBASE INTEGRÉE
    ========================================================= */
 const firebaseConfig = {
-  // COLLEZ ICI l'objet copié depuis la console Firebase, par exemple :
-  // apiKey: "AIza...",
-  // authDomain: "anniv-tata.firebaseapp.com",
-  // projectId: "anniv-tata",
-  // storageBucket: "anniv-tata.appspot.com",
-  // messagingSenderId: "...",
-  // appId: "..."
+  apiKey: "AIzaSyDVQKZE7Tx1A__Jdqgyi6zu6A1E4SP7lXQ",
+  authDomain: "anniversaire-aline.firebaseapp.com",
+  projectId: "anniversaire-aline",
+  storageBucket: "anniversaire-aline.firebasestorage.app",
+  messagingSenderId: "653961045220",
+  appId: "1:653961045220:web:ae1f796797a760524478f1"
 };
- 
+
 let db = null;
 let firebaseReady = false;
-try{
-  if(firebaseConfig.projectId){
+try {
+  if(firebaseConfig.projectId) {
     firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
     firebaseReady = true;
   }
-}catch(e){ console.warn("Firebase non configuré :", e); }
- 
+} catch(e) { console.warn("Firebase non configuré :", e); }
+
 /* =========================================================
-   2) Fallback local (si Firebase n'est pas configuré) :
-      tout fonctionne sur CE navigateur uniquement, à titre
-      de démo, sans partage entre invités.
+   2) Fallback local (si besoin)
    ========================================================= */
 const localFallback = {
   guests: JSON.parse(localStorage.getItem('fb_guests')||'[]'),
@@ -408,7 +570,7 @@ function saveLocal(){
   localStorage.setItem('fb_photos', JSON.stringify(localFallback.photos));
   localStorage.setItem('fb_ideas', JSON.stringify(localFallback.ideas));
 }
- 
+
 /* =========================================================
    3) Navigation entre écrans
    ========================================================= */
@@ -416,15 +578,15 @@ const screenSeal = document.getElementById('screenSeal');
 const screenDetails = document.getElementById('screenDetails');
 const screenSad = document.getElementById('screenSad');
 const screenSite = document.getElementById('screenSite');
- 
+
 document.getElementById('sealBtn').addEventListener('click', ()=>{
   screenSeal.style.display = 'none';
   screenDetails.classList.add('show');
 });
- 
+
 const nameInput = document.getElementById('guestName');
 const rsvpError = document.getElementById('rsvpError');
- 
+
 document.getElementById('btnNo').addEventListener('click', async ()=>{
   const name = nameInput.value.trim();
   if(!name){ rsvpError.style.display='block'; return; }
@@ -433,7 +595,7 @@ document.getElementById('btnNo').addEventListener('click', async ()=>{
   screenDetails.classList.remove('show');
   screenSad.classList.add('show');
 });
- 
+
 document.getElementById('btnYes').addEventListener('click', async ()=>{
   const name = nameInput.value.trim();
   if(!name){ rsvpError.style.display='block'; return; }
@@ -446,7 +608,7 @@ document.getElementById('btnYes').addEventListener('click', async ()=>{
   loadPhotos();
   loadIdeas();
 });
- 
+
 async function recordResponse(name, coming){
   if(firebaseReady){
     await db.collection('reponses').add({
@@ -457,7 +619,7 @@ async function recordResponse(name, coming){
     saveLocal();
   }
 }
- 
+
 /* =========================================================
    4) Onglets du site principal
    ========================================================= */
@@ -469,14 +631,14 @@ document.querySelectorAll('.tab').forEach(tab=>{
     document.getElementById('panel-'+tab.dataset.tab).classList.add('active');
   });
 });
- 
+
 /* =========================================================
    5) Qui vient
    ========================================================= */
 function initials(name){
   return name.trim().split(/\s+/).slice(0,2).map(w=>w[0]?.toUpperCase()||'').join('');
 }
- 
+
 async function loadGuests(){
   const listEl = document.getElementById('guestListEl');
   const render = (guests)=>{
@@ -487,7 +649,7 @@ async function loadGuests(){
     }
     listEl.innerHTML = yes.map(g=>`<li><div class="avatar">${initials(g.nom)}</div>${g.nom}</li>`).join('');
   };
- 
+
   if(firebaseReady){
     db.collection('reponses').onSnapshot(snap=>{
       const guests = snap.docs.map(d=>d.data());
@@ -497,7 +659,7 @@ async function loadGuests(){
     render(localFallback.guests);
   }
 }
- 
+
 /* =========================================================
    6) Photos
    ========================================================= */
@@ -509,7 +671,6 @@ photoInput.addEventListener('change', (e)=>{
   reader.onload = (evt)=>{
     const img = new Image();
     img.onload = async ()=>{
-      // Redimensionne pour rester léger
       const maxW = 900;
       const scale = Math.min(1, maxW/img.width);
       const canvas = document.createElement('canvas');
@@ -518,7 +679,7 @@ photoInput.addEventListener('change', (e)=>{
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img,0,0,canvas.width,canvas.height);
       const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
- 
+
       if(firebaseReady){
         await db.collection('photos').add({
           image: dataUrl, date: firebase.firestore.FieldValue.serverTimestamp()
@@ -533,7 +694,7 @@ photoInput.addEventListener('change', (e)=>{
   };
   reader.readAsDataURL(file);
 });
- 
+
 async function loadPhotos(){
   const grid = document.getElementById('photoGrid');
   const empty = document.getElementById('photoEmpty');
@@ -541,7 +702,7 @@ async function loadPhotos(){
     empty.style.display = photos.length? 'none':'block';
     grid.innerHTML = photos.map(p=>`<img src="${p.image}">`).join('');
   };
- 
+
   if(firebaseReady){
     db.collection('photos').orderBy('date','desc').onSnapshot(snap=>{
       render(snap.docs.map(d=>d.data()));
@@ -550,7 +711,7 @@ async function loadPhotos(){
     render(localFallback.photos);
   }
 }
- 
+
 /* =========================================================
    7) Idées musique / activités
    ========================================================= */
@@ -560,7 +721,7 @@ document.getElementById('ideaSubmit').addEventListener('click', async ()=>{
   const text = textEl.value.trim();
   if(!text) return;
   const who = nameInput.value.trim() || 'Anonyme';
- 
+
   if(firebaseReady){
     await db.collection('idees').add({
       type, texte:text, nom:who, date: firebase.firestore.FieldValue.serverTimestamp()
@@ -572,7 +733,7 @@ document.getElementById('ideaSubmit').addEventListener('click', async ()=>{
   }
   textEl.value='';
 });
- 
+
 async function loadIdeas(){
   const listEl = document.getElementById('ideaListEl');
   const empty = document.getElementById('ideaEmpty');
@@ -586,7 +747,7 @@ async function loadIdeas(){
       </li>
     `).join('');
   };
- 
+
   if(firebaseReady){
     db.collection('idees').orderBy('date','desc').onSnapshot(snap=>{
       render(snap.docs.map(d=>d.data()));
