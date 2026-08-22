@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Invitation 40 ans</title>
+  <title>Invitation 40 ans d'Aline</title>
 
   <!-- FIREBASE (SDK COMPAT) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -356,14 +356,14 @@
   <div id="screenSeal" class="card show" style="text-align: center;">
     <div style="font-size: 48px; margin-bottom: 12px; filter: drop-shadow(0 0 10px var(--gold-glow));">✉️</div>
     <h1 style="margin: 0 0 12px; font-size: 30px; color: var(--gold-bright);">Invitation Officielle</h1>
-    <p style="color: var(--ink-muted); font-size: 14px; margin-bottom: 28px; line-height: 1.6;">Vous êtes convié à célébrer un événement très spécial.</p>
+    <p style="color: var(--ink-muted); font-size: 14px; margin-bottom: 28px; line-height: 1.6;">Vous êtes convié à célébrer les <strong>40 ans d'Aline</strong> !</p>
     <button class="btn btn-pine" id="sealBtn">Ouvrir l'invitation</button>
   </div>
 
   <!-- ÉCRAN 2 : RSVP -->
   <div id="screenDetails" class="card">
     <div class="site-header" style="margin-bottom: 24px;">
-      <div class="script">40 Ans</div>
+      <div class="script">40 Ans d'Aline</div>
       <h2>Serez-vous des nôtres ?</h2>
     </div>
     <input type="text" id="guestName" placeholder="Votre nom et prénom">
@@ -385,7 +385,7 @@
   <!-- ÉCRAN 3B : SITE -->
   <div id="screenSite" class="card">
     <div class="site-header">
-      <div class="script">C'est noté !</div>
+      <div class="script">40 ans d'Aline</div>
       <h2 id="welcomeName">Bienvenue</h2>
       <div class="addr">26–27 sept · Samedi 11h · 3 rue du Ried, Hagenthal-le-Bas</div>
       <span class="reset-btn" onclick="resetSession()">Changer de nom / Répondre pour un proche</span>
@@ -393,14 +393,14 @@
 
     <!-- ONGLETS -->
     <div class="tabs">
-      <button class="tab active" onclick="switchTab('invites', this)">Invités</button>
-      <button class="tab" onclick="switchTab('photos', this)">Photos</button>
-      <button class="tab" onclick="switchTab('idees', this)">Idées</button>
-      <button class="tab" onclick="switchTab('infos', this)">Infos</button>
+      <button class="tab" id="tabBtn-invites" onclick="switchTab('invites', this)">Invités</button>
+      <button class="tab" id="tabBtn-photos" onclick="switchTab('photos', this)">Photos</button>
+      <button class="tab" id="tabBtn-idees" onclick="switchTab('idees', this)">Idées</button>
+      <button class="tab active" id="tabBtn-infos" onclick="switchTab('infos', this)">Infos</button>
     </div>
 
     <!-- ONGLET 1 : INVITÉS -->
-    <div id="tab-invites" class="tab-content active">
+    <div id="tab-invites" class="tab-content">
       <ul class="guest-list" id="guestList"></ul>
     </div>
 
@@ -429,8 +429,12 @@
       <ul class="idea-list" id="ideaList"></ul>
     </div>
 
-    <!-- ONGLET 4 : INFOS PRATIQUES -->
-    <div id="tab-infos" class="tab-content">
+    <!-- ONGLET 4 : INFOS PRATIQUES (PAR DÉFAUT) -->
+    <div id="tab-infos" class="tab-content active">
+      <div class="info-box">
+        <h3>🎉 Événement</h3>
+        <p>Anniversaire des 40 ans d'Aline !</p>
+      </div>
       <div class="info-box">
         <h3>📍 Adresse</h3>
         <p>3 rue du Ried, Hagenthal-le-Bas</p>
@@ -509,6 +513,10 @@ window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('welcomeName').textContent = 'Bienvenue, ' + userSession.nom + ' !';
       nameInput.value = userSession.nom;
       screenSite.classList.add('show');
+      
+      // Onglet infos par défaut
+      switchTab('infos', document.getElementById('tabBtn-infos'));
+      
       loadGuests();
       loadPhotos();
       loadIdeas();
@@ -555,6 +563,9 @@ document.getElementById('btnYes').addEventListener('click', async ()=>{
   screenDetails.classList.remove('show');
   screenSite.classList.add('show');
   
+  // S'ouvre directement sur l'onglet Infos
+  switchTab('infos', document.getElementById('tabBtn-infos'));
+
   loadGuests();
   loadPhotos();
   loadIdeas();
@@ -581,11 +592,11 @@ function switchTab(tabId, element) {
   document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
   
   document.getElementById('tab-' + tabId).classList.add('active');
-  element.classList.add('active');
+  if(element) element.classList.add('active');
 }
 
 /* =========================================================
-   6) INVITÉS EN DIRECT
+   6) INVITÉS EN DIRECT & VÉRIFICATION SUPPRESSION ADMIN
    ========================================================= */
 function initials(name){
   return name.trim().split(/\s+/).slice(0,2).map(w=>w[0]?.toUpperCase()||'').join('');
@@ -593,7 +604,20 @@ function initials(name){
 
 function loadGuests(){
   const listEl = document.getElementById('guestList');
+  const userSession = JSON.parse(localStorage.getItem('user_rsvp') || 'null');
+
   const render = (data)=>{
+    // Vérification : Si l'utilisateur actuel a été supprimé par l'admin -> Retour à la lettre
+    if(userSession && userSession.repondu && userSession.nom) {
+      const isStillInList = data.some(g => g.nom.toLowerCase() === userSession.nom.toLowerCase());
+      if(!isStillInList) {
+        localStorage.removeItem('user_rsvp');
+        alert("Votre inscription n'est plus enregistrée. Veuillez ouvrir à nouveau la lettre.");
+        location.reload();
+        return;
+      }
+    }
+
     const yes = data.filter(g=>g.vient);
     if(!yes.length){
       listEl.innerHTML = '<li style="justify-content:center; color:var(--ink-muted);">Personne pour l\'instant — soyez le premier ! 🎉</li>';
@@ -753,9 +777,9 @@ async function deleteIdea(id) {
 }
 
 /* =========================================================
-   9) ADMIN
+   9) ADMIN (MOT DE PASSE : Nykico=3)
    ========================================================= */
-const ADMIN_PASSWORD = "admin123";
+const ADMIN_PASSWORD = "Nykico=3";
 
 document.getElementById('adminBtn').addEventListener('click', ()=>{
   if(document.body.classList.contains('is-admin')){
