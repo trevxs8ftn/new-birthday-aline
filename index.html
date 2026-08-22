@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Invitation 40 ans d'Aline</title>
+  <title>Surprise Party — 40 ans d'Aline</title>
 
   <!-- FIREBASE (SDK COMPAT) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -135,14 +135,30 @@
       border-radius: var(--radius-md);
       border: 1px solid var(--gold);
       color: #ffffff;
-      padding: 32px 20px;
+      padding: 28px 20px;
       text-align: center;
       position: relative;
       box-shadow: inset 0 0 20px rgba(223, 183, 64, 0.1);
     }
     .site-header .script { color: var(--gold-bright); font-size: 34px; font-family: 'Caveat', cursive; text-shadow: 0 0 10px var(--gold-glow); }
-    .site-header h2 { margin: 6px 0 0; font-size: 26px; font-weight: 700; letter-spacing: 1px; color: #fff; }
-    .site-header .addr { margin-top: 10px; font-size: 12px; color: var(--gold-bright); font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; }
+    .site-header h2 { margin: 6px 0 0; font-size: 24px; font-weight: 700; letter-spacing: 1px; color: #fff; }
+    .site-header .addr { margin-top: 10px; font-size: 11px; color: var(--gold-bright); font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; }
+
+    .secret-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(223, 183, 64, 0.15);
+      border: 1px solid var(--gold);
+      color: var(--gold-bright);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
 
     .reset-btn {
       display: inline-block;
@@ -157,6 +173,31 @@
       transition: all 0.3s;
     }
     .reset-btn:hover { color: var(--gold); border-color: var(--gold); }
+
+    /* BOUTON RETOUR SOURNOIS / ÉLÉGANT */
+    .btn-back {
+      background: rgba(22, 61, 46, 0.5);
+      border: 1px solid var(--line);
+      color: var(--gold-bright);
+      padding: 6px 12px;
+      border-radius: var(--radius-md);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s ease;
+    }
+    .btn-back:hover {
+      border-color: var(--gold);
+      background: rgba(22, 61, 46, 0.8);
+      color: #fff;
+      transform: translateX(-2px);
+    }
 
     /* FORMULAIRES ET BOUTONS */
     input[type="text"], select {
@@ -216,7 +257,7 @@
     .tabs { 
       display: flex; 
       gap: 6px; 
-      margin: 26px 0 20px; 
+      margin: 24px 0 20px; 
       border-bottom: 1px solid var(--line);
       padding-bottom: 8px;
     }
@@ -352,17 +393,38 @@
   <img src="https://lh3.googleusercontent.com/d/1z7H6zfawpxE_Hu4PzxBonaqUiRRcVTCG" alt="Photo décor" class="deco-photo deco-left">
   <img src="https://lh3.googleusercontent.com/d/1bHOn_Vm6s7dohpLNy0qDUDDhnVm0XgHg" alt="Photo décor" class="deco-photo deco-right">
 
-  <!-- ÉCRAN 1 : SCEAU -->
+  <!-- ÉCRAN 1 : SCEAU ET INFOS PRÉALABLES -->
   <div id="screenSeal" class="card show" style="text-align: center;">
-    <div style="font-size: 48px; margin-bottom: 12px; filter: drop-shadow(0 0 10px var(--gold-glow));">✉️</div>
-    <h1 style="margin: 0 0 12px; font-size: 30px; color: var(--gold-bright);">Invitation Officielle</h1>
-    <p style="color: var(--ink-muted); font-size: 14px; margin-bottom: 28px; line-height: 1.6;">Vous êtes convié à célébrer les <strong>40 ans d'Aline</strong> !</p>
-    <button class="btn btn-pine" id="sealBtn">Ouvrir l'invitation</button>
+    <div style="font-size: 44px; margin-bottom: 8px; filter: drop-shadow(0 0 10px var(--gold-glow));">🤫</div>
+    <div class="secret-badge">Chuuut... C'est Secret !</div>
+    <h1 style="margin: 0 0 8px; font-size: 26px; color: var(--gold-bright);">Surprise Party pour Aline</h1>
+    <p style="color: var(--ink-muted); font-size: 13px; margin-bottom: 18px; line-height: 1.5;">
+      Une journée & soirée secrètes s'organisent pour célébrer ses <strong>40 ans</strong> !
+    </p>
+
+    <!-- INFOS CLÉS POUR SE DÉCIDER -->
+    <div class="info-box" style="text-align: left; margin-bottom: 20px; background: rgba(22, 61, 46, 0.4);">
+      <h3 style="color: var(--gold-bright); margin-bottom: 6px;">📅 Quand & Où ?</h3>
+      <p style="font-size: 13px; color: var(--ink); margin-bottom: 10px; line-height: 1.5;">
+        • <strong>Date :</strong> Samedi 26 Septembre 2026<br>
+        • <strong>Horaire :</strong> Rendez-vous avant <strong>12h00 précises</strong> (pour la surprise !)<br>
+        • <strong>Lieu :</strong> 3 rue du Ried, Hagenthal-le-Bas
+      </p>
+      
+      <h3 style="color: var(--gold-bright); margin: 10px 0 6px;">🥂 Au programme</h3>
+      <p style="font-size: 12px; color: var(--ink-muted); margin: 0; line-height: 1.5;">
+        Arrivée surprise, apéritif, déjeuner, après-midi détente & baignade 🏊, dîner et soirée dansante ! 🪩
+      </p>
+    </div>
+
+    <button class="btn btn-pine" id="sealBtn">Confirmer ma présence / Absence</button>
   </div>
 
   <!-- ÉCRAN 2 : RSVP -->
   <div id="screenDetails" class="card">
+    <button type="button" class="btn-back" id="btnBackToSeal">⬅️ Voir les infos</button>
     <div class="site-header" style="margin-bottom: 24px;">
+      <div class="secret-badge">🔒 Gardons le secret jusqu'au bout</div>
       <div class="script">40 Ans d'Aline</div>
       <h2>Serez-vous des nôtres ?</h2>
     </div>
@@ -378,33 +440,77 @@
   <div id="screenSad" class="card" style="text-align: center;">
     <div class="script" style="font-family: 'Caveat', cursive; font-size: 36px; color: var(--gold-bright);">Dommage !</div>
     <h2 style="margin-top: 6px;">On espère vous voir bientôt</h2>
-    <p style="color: var(--ink-muted); font-size: 14px; margin-bottom: 20px;">Merci d'avoir pris le temps de répondre.</p>
+    <p style="color: var(--ink-muted); font-size: 14px; margin-bottom: 20px;">Merci d'avoir pris le temps de répondre. (Et n'oubliez pas : gardez le secret ! 🤫)</p>
     <span class="reset-btn" onclick="resetSession()">S'inscrire sous un autre nom</span>
   </div>
 
-  <!-- ÉCRAN 3B : SITE -->
+  <!-- ÉCRAN 3B : SITE PRINCIPAL -->
   <div id="screenSite" class="card">
     <div class="site-header">
+      <div class="secret-badge">🤫 SURPRISE PARTY</div>
       <div class="script">40 ans d'Aline</div>
       <h2 id="welcomeName">Bienvenue</h2>
-      <div class="addr">26–27 sept · Samedi 11h · 3 rue du Ried, Hagenthal-le-Bas</div>
+      <div class="addr">Samedi 26 Septembre 2026 · Avant 12h00</div>
       <span class="reset-btn" onclick="resetSession()">Changer de nom / Répondre pour un proche</span>
     </div>
 
     <!-- ONGLETS -->
     <div class="tabs">
+      <button class="tab active" id="tabBtn-infos" onclick="switchTab('infos', this)">Infos</button>
+      <button class="tab" id="tabBtn-idees" onclick="switchTab('idees', this)">Animations</button>
       <button class="tab" id="tabBtn-invites" onclick="switchTab('invites', this)">Invités</button>
       <button class="tab" id="tabBtn-photos" onclick="switchTab('photos', this)">Photos</button>
-      <button class="tab" id="tabBtn-idees" onclick="switchTab('idees', this)">Idées</button>
-      <button class="tab active" id="tabBtn-infos" onclick="switchTab('infos', this)">Infos</button>
     </div>
 
-    <!-- ONGLET 1 : INVITÉS -->
+    <!-- ONGLET 1 : INFOS PRATIQUES -->
+    <div id="tab-infos" class="tab-content active">
+      <div class="info-box">
+        <h3>🎉 Une Fête Surprise en Secret !</h3>
+        <p>À l’occasion des 40 ans d'Aline, une belle journée s'organise en secret. La seule consigne : <strong>gardons précieusement le secret jusqu’au bout ! 🤫</strong></p>
+      </div>
+
+      <div class="info-box">
+        <h3>⏰ Rendez-vous indispensable</h3>
+        <p>Rendez-vous le <strong>Samedi 26 septembre 2026 avant 12h00</strong> pour être bien présents avant son arrivée et lui faire la surprise !</p>
+      </div>
+
+      <div class="info-box">
+        <h3>🥂 Au Programme du Week-end</h3>
+        <p>La journée se poursuivra tous ensemble autour d’un apéritif, d’un déjeuner, d’un après-midi détente et, si la météo le permet, d’une baignade 🏊. Le soir, place au dîner et surtout à la fête… avec une soirée dansante ! 🪩</p>
+      </div>
+
+      <div class="info-box">
+        <h3>📍 Adresse</h3>
+        <p>3 rue du Ried, Hagenthal-le-Bas<br><small style="color:var(--ink-muted);">Stationnement facile dans la rue et aux alentours.</small></p>
+      </div>
+    </div>
+
+    <!-- ONGLET 2 : IDÉES & ANIMATIONS -->
+    <div id="tab-idees" class="tab-content">
+      <div class="info-box" style="margin-bottom: 20px;">
+        <h3>💡 Vos Idées & Animations</h3>
+        <p style="font-size: 12px; margin-bottom: 8px;">Aline adore les jeux et les animations ! Si vous avez une idée pour lui faire plaisir ou mettre l’ambiance, partagez-la ici.</p>
+        <p style="font-size: 12px; color: var(--gold-bright); margin-bottom: 0;"><strong>Note de Johanna :</strong> Pour son arrivée, j'aimerais lui préparer une petite chanson sur une musique qu'elle aime... Et pour le soir, Aline adore danser, il va falloir lui faire honneur sur la piste ! 🎵💃</p>
+      </div>
+
+      <div style="display: grid; gap: 8px; margin-bottom: 20px;">
+        <select id="ideaType">
+          <option value="Musique">🎵 Chanson / Musique</option>
+          <option value="Activité">🎉 Jeu / Animation / Surprise</option>
+        </select>
+        <input type="text" id="ideaText" placeholder="Proposer un titre, un jeu ou un projet...">
+        <input type="text" id="ideaWho" placeholder="Votre nom">
+        <button class="btn btn-pine" id="ideaSubmit">Proposer l'idée</button>
+      </div>
+      <ul class="idea-list" id="ideaList"></ul>
+    </div>
+
+    <!-- ONGLET 3 : INVITÉS -->
     <div id="tab-invites" class="tab-content">
       <ul class="guest-list" id="guestList"></ul>
     </div>
 
-    <!-- ONGLET 2 : PHOTOS -->
+    <!-- ONGLET 4 : PHOTOS -->
     <div id="tab-photos" class="tab-content">
       <div class="upload-zone" onclick="document.getElementById('photoInput').click()">
         <span style="font-size: 24px;">📷</span>
@@ -413,40 +519,6 @@
       </div>
       <div id="photoEmpty" style="text-align:center; color: var(--ink-muted); font-size: 13px; display:none; padding: 10px;">Aucune photo partagée pour l'instant.</div>
       <div class="photo-grid" id="photoGrid"></div>
-    </div>
-
-    <!-- ONGLET 3 : IDÉES -->
-    <div id="tab-idees" class="tab-content">
-      <div style="display: grid; gap: 8px; margin-bottom: 20px;">
-        <select id="ideaType">
-          <option value="Musique">🎵 Chanson / Musique</option>
-          <option value="Activité">🎉 Animation / Activité</option>
-        </select>
-        <input type="text" id="ideaText" placeholder="Proposer un titre ou un jeu...">
-        <input type="text" id="ideaWho" placeholder="Votre nom">
-        <button class="btn btn-pine" id="ideaSubmit">Proposer l'idée</button>
-      </div>
-      <ul class="idea-list" id="ideaList"></ul>
-    </div>
-
-    <!-- ONGLET 4 : INFOS PRATIQUES (PAR DÉFAUT) -->
-    <div id="tab-infos" class="tab-content active">
-      <div class="info-box">
-        <h3>🎉 Événement</h3>
-        <p>Anniversaire des 40 ans d'Aline !</p>
-      </div>
-      <div class="info-box">
-        <h3>📍 Adresse</h3>
-        <p>3 rue du Ried, Hagenthal-le-Bas</p>
-      </div>
-      <div class="info-box">
-        <h3>⏰ Horaires</h3>
-        <p>Rendez-vous le Samedi 26 Septembre à partir de 11h00 jusqu'au Dimanche !</p>
-      </div>
-      <div class="info-box">
-        <h3>🚗 Stationnement</h3>
-        <p>Possibilité de se garer facilement dans la rue et aux alentours.</p>
-      </div>
     </div>
 
   </div>
@@ -539,6 +611,11 @@ document.getElementById('sealBtn').addEventListener('click', ()=>{
   screenDetails.classList.add('show');
 });
 
+document.getElementById('btnBackToSeal').addEventListener('click', ()=>{
+  screenDetails.classList.remove('show');
+  screenSeal.classList.add('show');
+});
+
 document.getElementById('btnNo').addEventListener('click', async ()=>{
   const name = nameInput.value.trim();
   if(!name){ rsvpError.style.display='block'; return; }
@@ -607,7 +684,6 @@ function loadGuests(){
   const userSession = JSON.parse(localStorage.getItem('user_rsvp') || 'null');
 
   const render = (data)=>{
-    // Vérification : Si l'utilisateur actuel a été supprimé par l'admin -> Retour à la lettre
     if(userSession && userSession.repondu && userSession.nom) {
       const isStillInList = data.some(g => g.nom.toLowerCase() === userSession.nom.toLowerCase());
       if(!isStillInList) {
@@ -745,7 +821,7 @@ function loadIdeas(){
     list.innerHTML = ideas.map(i=>`
       <li>
         <div>
-          <span style="font-size:10px; font-weight:bold; color:var(--gold-bright); text-transform:uppercase;">${i.type === 'Musique' ? '🎵 Musique' : '🎉 Activité'}</span>
+          <span style="font-size:10px; font-weight:bold; color:var(--gold-bright); text-transform:uppercase;">${i.type === 'Musique' ? '🎵 Musique' : '🎉 Jeu / Animation'}</span>
           <div style="font-size:14px; margin: 2px 0; color:#fff;">${i.texte}</div>
           <div style="font-size:11px; color:var(--ink-muted);">par ${i.nom}</div>
         </div>
