@@ -60,6 +60,40 @@
 
     h1, h2, .display { font-family: 'Playfair Display', serif; }
 
+    /* BANNIÈRE BOUGIE ANIMÉE */
+    .candle-banner {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--gold);
+      margin-bottom: 16px;
+      box-shadow: 0 0 15px var(--gold-glow);
+      animation: candleGlow 3s infinite alternate ease-in-out, candleFadeIn 1.2s ease-out;
+    }
+
+    @keyframes candleGlow {
+      0% {
+        box-shadow: 0 0 10px rgba(223, 183, 64, 0.3), 0 0 20px rgba(223, 183, 64, 0.1);
+        filter: brightness(1);
+      }
+      100% {
+        box-shadow: 0 0 25px rgba(223, 183, 64, 0.7), 0 0 40px rgba(251, 227, 142, 0.3);
+        filter: brightness(1.1);
+      }
+    }
+
+    @keyframes candleFadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
     /* CONTENEUR ET PHOTOS LATÉRALES */
     .card-container {
       position: relative;
@@ -384,9 +418,45 @@
       z-index: 100; text-transform: uppercase; letter-spacing: 1px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
+
+    /* AJOUT D'UNE BULLE D'INFO (VISIBLE UNIQUEMENT EN MODE ADMIN) */
+    .admin-add-box {
+      display: none;
+      background: rgba(223, 183, 64, 0.06);
+      border: 1px dashed var(--gold);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-top: 8px;
+      margin-bottom: 12px;
+    }
+    body.is-admin .admin-add-box { display: block; }
+    .admin-add-box input[type="text"] { margin-bottom: 10px; }
+    .admin-add-box .btn { padding: 12px; font-size: 12px; }
+
+    /* PHOTO DE FOND FIXE (RESTE EN PLACE QUAND ON SCROLL) */
+    .bg-photo {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -2;
+      background-image: url('https://lh3.googleusercontent.com/d/1MGSSW1sAl0VEciBdUGwO3sBphV-yGJzo');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: brightness(0.35) saturate(1.1);
+    }
+    .bg-photo::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(4,10,8,0.55), rgba(4,10,8,0.92));
+    }
   </style>
 </head>
 <body>
+
+<div class="bg-photo"></div>
 
 <div class="card-container">
   
@@ -446,6 +516,9 @@
 
   <!-- ÉCRAN 3B : SITE PRINCIPAL -->
   <div id="screenSite" class="card">
+    <!-- IMAGE DE BOUGIE ANIMÉE -->
+    <img src="https://lh3.googleusercontent.com/d/1MGSSW1sAl0VEciBdUGwO3sBphV-yGJzo" alt="Bougies d'anniversaire" class="candle-banner">
+
     <div class="site-header">
       <div class="secret-badge">🤫 SURPRISE PARTY</div>
       <div class="script">40 ans d'Aline</div>
@@ -464,24 +537,47 @@
 
     <!-- ONGLET 1 : INFOS PRATIQUES -->
     <div id="tab-infos" class="tab-content active">
-      <div class="info-box">
-        <h3>🎉 Une Fête Surprise en Secret !</h3>
+      <div class="info-box" data-info-id="default-fete">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+          <h3 style="margin-bottom:4px;">🎉 Une Fête Surprise en Secret !</h3>
+          <button class="delete-btn" style="flex-shrink:0;" onclick="deleteDefaultInfo('default-fete')">Supprimer</button>
+        </div>
         <p>À l’occasion des 40 ans d'Aline, une belle journée s'organise en secret. La seule consigne : <strong>gardons précieusement le secret jusqu’au bout ! 🤫</strong></p>
       </div>
 
-      <div class="info-box">
-        <h3>⏰ Rendez-vous indispensable</h3>
+      <div class="info-box" data-info-id="default-rdv">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+          <h3 style="margin-bottom:4px;">⏰ Rendez-vous indispensable</h3>
+          <button class="delete-btn" style="flex-shrink:0;" onclick="deleteDefaultInfo('default-rdv')">Supprimer</button>
+        </div>
         <p>Rendez-vous le <strong>Samedi 26 septembre 2026 avant 12h00</strong> pour être bien présents avant son arrivée et lui faire la surprise !</p>
       </div>
 
-      <div class="info-box">
-        <h3>🥂 Au Programme du Week-end</h3>
+      <div class="info-box" data-info-id="default-programme">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+          <h3 style="margin-bottom:4px;">🥂 Au Programme du Week-end</h3>
+          <button class="delete-btn" style="flex-shrink:0;" onclick="deleteDefaultInfo('default-programme')">Supprimer</button>
+        </div>
         <p>La journée se poursuivra tous ensemble autour d’un apéritif, d’un déjeuner, d’un après-midi détente et, si la météo le permet, d’une baignade 🏊. Le soir, place au dîner et surtout à la fête… avec une soirée dansante ! 🪩</p>
       </div>
 
-      <div class="info-box">
-        <h3>📍 Adresse</h3>
+      <div class="info-box" data-info-id="default-adresse">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+          <h3 style="margin-bottom:4px;">📍 Adresse</h3>
+          <button class="delete-btn" style="flex-shrink:0;" onclick="deleteDefaultInfo('default-adresse')">Supprimer</button>
+        </div>
         <p>3 rue du Ried, Hagenthal-le-Bas<br><small style="color:var(--ink-muted);">Stationnement facile dans la rue et aux alentours.</small></p>
+      </div>
+
+      <!-- BULLES PERSONNALISÉES (ajoutées par l'admin) -->
+      <div id="customInfoList"></div>
+
+      <!-- FORMULAIRE ADMIN POUR AJOUTER UNE BULLE -->
+      <div class="admin-add-box" id="adminAddInfoBox">
+        <h3 style="margin:0 0 10px; font-size:12px; color:var(--gold-bright); text-transform:uppercase; letter-spacing:1px;">🔓 Ajouter une bulle d'info</h3>
+        <input type="text" id="newInfoTitle" placeholder="Titre de la bulle (ex: 🎂 Le gâteau)">
+        <input type="text" id="newInfoText" placeholder="Description de la bulle">
+        <button class="btn btn-pine" id="newInfoSubmit">Ajouter la bulle</button>
       </div>
     </div>
 
@@ -558,13 +654,17 @@ try {
 const localFallback = {
   guests: JSON.parse(localStorage.getItem('fb_guests')||'[]'),
   photos: JSON.parse(localStorage.getItem('fb_photos')||'[]'),
-  ideas: JSON.parse(localStorage.getItem('fb_ideas')||'[]')
+  ideas: JSON.parse(localStorage.getItem('fb_ideas')||'[]'),
+  infos: JSON.parse(localStorage.getItem('fb_infos')||'[]'),
+  hiddenInfos: JSON.parse(localStorage.getItem('fb_hiddenInfos')||'[]')
 };
 
 function saveLocal(){
   localStorage.setItem('fb_guests', JSON.stringify(localFallback.guests));
   localStorage.setItem('fb_photos', JSON.stringify(localFallback.photos));
   localStorage.setItem('fb_ideas', JSON.stringify(localFallback.ideas));
+  localStorage.setItem('fb_infos', JSON.stringify(localFallback.infos));
+  localStorage.setItem('fb_hiddenInfos', JSON.stringify(localFallback.hiddenInfos));
 }
 
 /* =========================================================
@@ -592,6 +692,8 @@ window.addEventListener('DOMContentLoaded', () => {
       loadGuests();
       loadPhotos();
       loadIdeas();
+      loadCustomInfos();
+      loadHiddenDefaults();
     } else {
       screenSad.classList.add('show');
     }
@@ -646,6 +748,8 @@ document.getElementById('btnYes').addEventListener('click', async ()=>{
   loadGuests();
   loadPhotos();
   loadIdeas();
+  loadCustomInfos();
+  loadHiddenDefaults();
 });
 
 async function recordResponse(name, coming){
@@ -853,7 +957,98 @@ async function deleteIdea(id) {
 }
 
 /* =========================================================
-   9) ADMIN (MOT DE PASSE : Nykico=3)
+   9) BULLES D'INFO PERSONNALISÉES (ADMIN)
+   ========================================================= */
+document.getElementById('newInfoSubmit').addEventListener('click', async ()=>{
+  const titre = document.getElementById('newInfoTitle').value.trim();
+  const texte = document.getElementById('newInfoText').value.trim();
+  if(!titre || !texte) return;
+
+  if(firebaseReady){
+    try {
+      await db.collection('infosCustom').add({
+        titre, texte, date: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } catch(e) { console.error(e); }
+  } else {
+    localFallback.infos.push({id: Date.now().toString(), titre, texte, date: Date.now()});
+    saveLocal();
+    loadCustomInfos();
+  }
+  document.getElementById('newInfoTitle').value = '';
+  document.getElementById('newInfoText').value = '';
+});
+
+function loadCustomInfos(){
+  const list = document.getElementById('customInfoList');
+  const render = (infos)=>{
+    list.innerHTML = infos.map(i=>`
+      <div class="info-box">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+          <h3 style="margin-bottom:4px;">${i.titre}</h3>
+          <button class="delete-btn" style="flex-shrink:0;" onclick="deleteCustomInfo('${i.id}')">Supprimer</button>
+        </div>
+        <p>${i.texte}</p>
+      </div>
+    `).join('');
+  };
+
+  if(firebaseReady){
+    db.collection('infosCustom').orderBy('date','asc').onSnapshot(snap=>{
+      render(snap.docs.map(d=>({ id: d.id, ...d.data() })));
+    }, err => {
+      render(localFallback.infos);
+    });
+  } else {
+    render(localFallback.infos);
+  }
+}
+
+async function deleteCustomInfo(id) {
+  if(!confirm("Supprimer cette bulle d'info ?")) return;
+  if(firebaseReady){
+    await db.collection('infosCustom').doc(id).delete();
+  } else {
+    localFallback.infos = localFallback.infos.filter(i=>i.id !== id);
+    saveLocal();
+    loadCustomInfos();
+  }
+}
+
+/* Suppression des 4 bulles "de base" (Fête / Rendez-vous / Programme / Adresse) */
+function applyHiddenDefaults(hiddenIds){
+  document.querySelectorAll('[data-info-id]').forEach(el=>{
+    el.style.display = hiddenIds.includes(el.dataset.infoId) ? 'none' : '';
+  });
+}
+
+async function deleteDefaultInfo(id){
+  if(!confirm("Supprimer cette bulle d'info ?")) return;
+  if(firebaseReady){
+    try {
+      await db.collection('infosHidden').doc(id).set({ hidden: true });
+    } catch(e) { console.error(e); }
+  } else {
+    if(!localFallback.hiddenInfos.includes(id)) localFallback.hiddenInfos.push(id);
+    saveLocal();
+    applyHiddenDefaults(localFallback.hiddenInfos);
+  }
+}
+
+function loadHiddenDefaults(){
+  if(firebaseReady){
+    db.collection('infosHidden').onSnapshot(snap=>{
+      applyHiddenDefaults(snap.docs.map(d=>d.id));
+    }, err => {
+      applyHiddenDefaults(localFallback.hiddenInfos);
+    });
+  } else {
+    applyHiddenDefaults(localFallback.hiddenInfos);
+  }
+}
+
+/* =========================================================
+   10) ADMIN (MOT DE PASSE : Nykico=3)
    ========================================================= */
 const ADMIN_PASSWORD = "Nykico=3";
 
@@ -873,6 +1068,7 @@ document.getElementById('adminBtn').addEventListener('click', ()=>{
     }
   }
 });
+
 </script>
 
 </body>
