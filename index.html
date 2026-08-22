@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Invitation 40 ans</title>
 
-  <!-- FIREBASE -->
+  <!-- FIREBASE (SDK COMPAT) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
@@ -36,7 +36,7 @@
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; min-height: 100vh; font-family: 'Plus Jakarta Sans', sans-serif; color: var(--ink); }
 
-    /* BACKGROUND ANIMÉ HYPNOTIQUE */
+    /* BACKGROUND ANIMÉ */
     body {
       background: var(--bg);
       background-image: 
@@ -60,7 +60,7 @@
 
     h1, h2, .display { font-family: 'Playfair Display', serif; }
 
-    /* CONTENEUR ET PHOTOS LATÉRALES LUXE */
+    /* CONTENEUR ET PHOTOS LATÉRALES */
     .card-container {
       position: relative;
       width: 100%;
@@ -82,7 +82,7 @@
       z-index: 5;
       width: 150px;
       height: 190px;
-      object-fit: cover; /* Cadrage parfait, remplit tout le bloc sans blanc autour */
+      object-fit: cover;
       object-position: center;
       border: 2px solid var(--gold);
       border-radius: var(--radius-md);
@@ -106,7 +106,7 @@
       .deco-photo { display: none; }
     }
 
-    /* CARTE ET GLASSMORPHISM */
+    /* CARTE GLASSMORPHISM */
     .card {
       background: var(--card-bg);
       backdrop-filter: blur(16px);
@@ -158,7 +158,7 @@
     }
     .reset-btn:hover { color: var(--gold); border-color: var(--gold); }
 
-    /* CHAMPS ET BOUTONS */
+    /* FORMULAIRES ET BOUTONS */
     input[type="text"], select {
       width: 100%;
       padding: 14px 16px;
@@ -251,7 +251,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* CARTES DU CONTENU */
+    /* LISTES */
     .guest-list, .idea-list { list-style: none; padding: 0; margin: 0; }
     .guest-list li, .idea-list li {
       display: flex; 
@@ -281,7 +281,7 @@
       border: 1px solid var(--gold);
     }
 
-    /* GRID PHOTOS */
+    /* PHOTOS */
     .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .photo-card { position: relative; overflow: hidden; border-radius: var(--radius-md); border: 1px solid var(--line); }
     .photo-grid img { 
@@ -319,7 +319,7 @@
     .info-box h3 { margin: 0 0 6px; font-size: 13px; color: var(--gold-bright); text-transform: uppercase; letter-spacing: 1px; }
     .info-box p { margin: 0; font-size: 13px; color: var(--ink-muted); line-height: 1.6; }
 
-    /* ADMIN BUTTONS */
+    /* ADMIN */
     .delete-btn {
       background: rgba(225, 29, 72, 0.2); color: #fecdd3; border: 1px solid #e11d48;
       border-radius: var(--radius-md); padding: 6px 10px; font-size: 11px;
@@ -349,11 +349,10 @@
 
 <div class="card-container">
   
-  <!-- PHOTOS DÉCORATIVES DRIVE (CUBÉES & CADRÉES PARFAITEMENT SANS BLANC) -->
   <img src="https://lh3.googleusercontent.com/d/1z7H6zfawpxE_Hu4PzxBonaqUiRRcVTCG" alt="Photo décor" class="deco-photo deco-left">
   <img src="https://lh3.googleusercontent.com/d/1bHOn_Vm6s7dohpLNy0qDUDDhnVm0XgHg" alt="Photo décor" class="deco-photo deco-right">
 
-  <!-- ÉCRAN 1 : SCEAU D'INVITATION -->
+  <!-- ÉCRAN 1 : SCEAU -->
   <div id="screenSeal" class="card show" style="text-align: center;">
     <div style="font-size: 48px; margin-bottom: 12px; filter: drop-shadow(0 0 10px var(--gold-glow));">✉️</div>
     <h1 style="margin: 0 0 12px; font-size: 30px; color: var(--gold-bright);">Invitation Officielle</h1>
@@ -361,7 +360,7 @@
     <button class="btn btn-pine" id="sealBtn">Ouvrir l'invitation</button>
   </div>
 
-  <!-- ÉCRAN 2 : FORMULAIRE RSVP -->
+  <!-- ÉCRAN 2 : RSVP -->
   <div id="screenDetails" class="card">
     <div class="site-header" style="margin-bottom: 24px;">
       <div class="script">40 Ans</div>
@@ -371,7 +370,7 @@
     <div id="rsvpError" style="color: #f43f5e; font-size: 12px; display: none; margin-bottom: 12px;">Veuillez indiquer votre nom.</div>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
       <button class="btn btn-pine" id="btnYes">Je viens ! 🎉</button>
-      <button class="btn btn-outline" id="btnNo">Absente) 😢</button>
+      <button class="btn btn-outline" id="btnNo">Absence 😢</button>
     </div>
   </div>
 
@@ -383,7 +382,7 @@
     <span class="reset-btn" onclick="resetSession()">S'inscrire sous un autre nom</span>
   </div>
 
-  <!-- ÉCRAN 3B : SITE PRINCIPAL -->
+  <!-- ÉCRAN 3B : SITE -->
   <div id="screenSite" class="card">
     <div class="site-header">
       <div class="script">C'est noté !</div>
@@ -450,15 +449,20 @@
 
 </div>
 
-<!-- BOUTON ADMIN -->
+<!-- ADMIN BUTTON -->
 <button class="admin-trigger" id="adminBtn">🔒 Admin</button>
 
 <script>
 /* =========================================================
-   1) CONFIGURATION FIREBASE INTEGRÉE
+   1) CONFIGURATION FIREBASE OFFICIELLE (ANNIVERSAIRE-ALINE)
    ========================================================= */
 const firebaseConfig = {
-  // Vos identifiants Firebase restent valides
+  apiKey: "AIzaSyDVQKZE7Tx1A__Jdqgyi6zu6A1E4SP7lXQ",
+  authDomain: "anniversaire-aline.firebaseapp.com",
+  projectId: "anniversaire-aline",
+  storageBucket: "anniversaire-aline.firebasestorage.app",
+  messagingSenderId: "653961045220",
+  appId: "1:653961045220:web:ae1f796797a760524478f1"
 };
 
 let db = null;
@@ -558,9 +562,11 @@ document.getElementById('btnYes').addEventListener('click', async ()=>{
 
 async function recordResponse(name, coming){
   if(firebaseReady){
-    await db.collection('reponses').add({
-      nom: name, vient: coming, date: firebase.firestore.FieldValue.serverTimestamp()
-    });
+    try {
+      await db.collection('reponses').add({
+        nom: name, vient: coming, date: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } catch(e) { console.error("Erreur enregistrement :", e); }
   } else {
     localFallback.guests.push({id: Date.now().toString(), nom:name, vient:coming, date: Date.now()});
     saveLocal();
@@ -579,7 +585,7 @@ function switchTab(tabId, element) {
 }
 
 /* =========================================================
-   6) INVITÉS
+   6) INVITÉS EN DIRECT
    ========================================================= */
 function initials(name){
   return name.trim().split(/\s+/).slice(0,2).map(w=>w[0]?.toUpperCase()||'').join('');
@@ -607,6 +613,8 @@ function loadGuests(){
   if(firebaseReady){
     db.collection('reponses').onSnapshot(snap=>{
       render(snap.docs.map(d=>({ id: d.id, ...d.data() })));
+    }, err => {
+      render(localFallback.guests);
     });
   } else {
     render(localFallback.guests);
@@ -625,7 +633,7 @@ async function deleteGuest(id) {
 }
 
 /* =========================================================
-   7) PHOTOS
+   7) PHOTOS EN DIRECT
    ========================================================= */
 const photoInput = document.getElementById('photoInput');
 photoInput.addEventListener('change', (e)=>{
@@ -635,9 +643,11 @@ photoInput.addEventListener('change', (e)=>{
   reader.onload = async (evt)=>{
     const dataUrl = evt.target.result;
     if(firebaseReady){
-      await db.collection('photos').add({
-        image: dataUrl, date: firebase.firestore.FieldValue.serverTimestamp()
-      });
+      try {
+        await db.collection('photos').add({
+          image: dataUrl, date: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch(err) { console.error("Erreur envoi photo :", err); }
     } else {
       localFallback.photos.unshift({id: Date.now().toString(), image:dataUrl, date:Date.now()});
       saveLocal();
@@ -663,6 +673,8 @@ function loadPhotos(){
   if(firebaseReady){
     db.collection('photos').orderBy('date','desc').onSnapshot(snap=>{
       render(snap.docs.map(d=>({ id: d.id, ...d.data() })));
+    }, err => {
+      render(localFallback.photos);
     });
   } else {
     render(localFallback.photos);
@@ -681,7 +693,7 @@ async function deletePhoto(id) {
 }
 
 /* =========================================================
-   8) IDÉES
+   8) IDÉES EN DIRECT
    ========================================================= */
 document.getElementById('ideaSubmit').addEventListener('click', async ()=>{
   const type = document.getElementById('ideaType').value;
@@ -690,9 +702,11 @@ document.getElementById('ideaSubmit').addEventListener('click', async ()=>{
   if(!text) return;
 
   if(firebaseReady){
-    await db.collection('idees').add({
-      type, texte:text, nom:who, date: firebase.firestore.FieldValue.serverTimestamp()
-    });
+    try {
+      await db.collection('idees').add({
+        type, texte:text, nom:who, date: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } catch(e) { console.error(e); }
   } else {
     localFallback.ideas.unshift({id: Date.now().toString(), type, texte:text, nom:who, date:Date.now()});
     saveLocal();
@@ -719,6 +733,8 @@ function loadIdeas(){
   if(firebaseReady){
     db.collection('idees').orderBy('date','desc').onSnapshot(snap=>{
       render(snap.docs.map(d=>({ id: d.id, ...d.data() })));
+    }, err => {
+      render(localFallback.ideas);
     });
   } else {
     render(localFallback.ideas);
