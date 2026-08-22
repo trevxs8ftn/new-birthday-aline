@@ -5,43 +5,46 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Invitation 40 ans</title>
 
+  <!-- FIREBASE -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
+  <!-- FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --pine: #0f2d22;
-      --pine-light: #1d4335;
-      --gold: #d4af37;
-      --gold-light: #f3e5ab;
-      --gold-glow: rgba(212, 175, 55, 0.25);
-      --bg: #07120e;
-      --card-bg: rgba(255, 255, 255, 0.97);
-      --ink: #121816;
-      --ink-muted: #52605b;
-      --line: rgba(15, 45, 34, 0.12);
+      --pine: #0a231a;
+      --pine-light: #163d2e;
+      --gold: #dfb740;
+      --gold-bright: #fbe38e;
+      --gold-glow: rgba(223, 183, 64, 0.4);
+      --bg: #040a08;
+      --card-bg: rgba(14, 26, 21, 0.75);
+      --card-border: rgba(223, 183, 64, 0.25);
+      --ink: #f0f4f2;
+      --ink-muted: #8fa39a;
+      --line: rgba(223, 183, 64, 0.15);
       
-      /* Style moderne : Bords droits et épurés */
-      --radius-lg: 4px;
-      --radius-md: 2px;
-      --shadow-premium: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(212, 175, 55, 0.1);
+      --radius-lg: 12px;
+      --radius-md: 6px;
+      --shadow-premium: 0 30px 60px rgba(0,0,0,0.8), 0 0 50px rgba(223, 183, 64, 0.12);
     }
 
     * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; }
+    html, body { margin: 0; padding: 0; min-height: 100vh; font-family: 'Plus Jakarta Sans', sans-serif; color: var(--ink); }
 
+    /* BACKGROUND ANIMÉ HYPNOTIQUE */
     body {
       background: var(--bg);
       background-image: 
-        radial-gradient(circle at 50% 0%, rgba(29, 67, 53, 0.45), transparent 70%),
-        radial-gradient(circle at 85% 90%, rgba(212, 175, 55, 0.08), transparent 50%);
-      color: var(--ink);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      min-height: 100vh;
+        radial-gradient(circle at 20% 20%, rgba(22, 61, 46, 0.5), transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(223, 183, 64, 0.08), transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(10, 35, 26, 0.8), transparent 60%);
+      background-size: 150% 150%;
+      animation: bgPulse 12s ease infinite alternate;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -50,207 +53,275 @@
       overflow-x: hidden;
     }
 
+    @keyframes bgPulse {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 100% 100%; }
+    }
+
     h1, h2, .display { font-family: 'Playfair Display', serif; }
 
+    /* CONTENEUR ET PHOTOS LATÉRALES LUXE */
     .card-container {
       position: relative;
       width: 100%;
       max-width: 520px;
+      perspective: 1000px;
     }
 
-    /* PHOTOS DÉCORATIVES SUR LES CÔTÉS (GOOGLE DRIVE) */
-    @keyframes slideInLeft {
-      0% { opacity: 0; transform: translateX(-40px); }
-      100% { opacity: 1; transform: translateX(0); }
+    @keyframes floatLeft {
+      0% { opacity: 0; transform: translateX(-60px) rotate(-6deg) scale(0.9); }
+      100% { opacity: 1; transform: translateX(0) rotate(-4deg) scale(1); }
     }
-    @keyframes slideInRight {
-      0% { opacity: 0; transform: translateX(40px); }
-      100% { opacity: 1; transform: translateX(0); }
+    @keyframes floatRight {
+      0% { opacity: 0; transform: translateX(60px) rotate(6deg) scale(0.9); }
+      100% { opacity: 1; transform: translateX(0) rotate(4deg) scale(1); }
     }
 
     .deco-photo {
       position: absolute;
       z-index: 5;
-      width: 130px;
-      height: 160px;
-      object-fit: cover;
-      border: 1px solid var(--gold);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+      width: 150px;
+      height: 190px;
+      object-fit: cover; /* Cadrage parfait, remplit tout le bloc sans blanc autour */
+      object-position: center;
+      border: 2px solid var(--gold);
+      border-radius: var(--radius-md);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.9), 0 0 20px var(--gold-glow);
       opacity: 0;
       pointer-events: none;
+      transition: all 0.5s ease;
     }
 
     .deco-left {
-      top: 40px; left: -150px;
-      animation: slideInLeft 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+      top: 20px; left: -170px;
+      animation: floatLeft 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
     }
 
     .deco-right {
-      bottom: 40px; right: -150px;
-      animation: slideInRight 1s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+      bottom: 20px; right: -170px;
+      animation: floatRight 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
     }
 
-    @media (max-width: 840px) {
+    @media (max-width: 880px) {
       .deco-photo { display: none; }
     }
 
-    /* STRUCTURES ET CARTES */
+    /* CARTE ET GLASSMORPHISM */
     .card {
       background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border-radius: var(--radius-lg);
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      padding: 32px 28px;
+      border: 1px solid var(--card-border);
+      padding: 36px 30px;
       box-shadow: var(--shadow-premium);
       display: none;
       position: relative;
       z-index: 10;
+      opacity: 0;
+      transform: translateY(20px) scale(0.98);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .card.show { display: block; }
 
+    .card.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* HEADER */
     .site-header {
-      background: var(--pine);
+      background: linear-gradient(135deg, rgba(22, 61, 46, 0.8), rgba(10, 35, 26, 0.95));
       border-radius: var(--radius-md);
       border: 1px solid var(--gold);
       color: #ffffff;
-      padding: 36px 24px 28px;
+      padding: 32px 20px;
       text-align: center;
       position: relative;
+      box-shadow: inset 0 0 20px rgba(223, 183, 64, 0.1);
     }
-    .site-header .script { color: var(--gold-light); font-size: 32px; font-family: 'Caveat', cursive; }
-    .site-header h2 { margin: 6px 0 0; font-size: 26px; font-weight: 600; letter-spacing: 0.5px; }
-    .site-header .addr { margin-top: 10px; font-size: 13px; color: #a3b8b0; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; }
+    .site-header .script { color: var(--gold-bright); font-size: 34px; font-family: 'Caveat', cursive; text-shadow: 0 0 10px var(--gold-glow); }
+    .site-header h2 { margin: 6px 0 0; font-size: 26px; font-weight: 700; letter-spacing: 1px; color: #fff; }
+    .site-header .addr { margin-top: 10px; font-size: 12px; color: var(--gold-bright); font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; }
 
     .reset-btn {
       display: inline-block;
       margin-top: 14px;
       font-size: 11px;
-      color: var(--gold-light);
-      text-decoration: underline;
+      color: var(--ink-muted);
+      text-decoration: none;
+      border-bottom: 1px solid var(--ink-muted);
       cursor: pointer;
-      opacity: 0.85;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
+      transition: all 0.3s;
     }
-    .reset-btn:hover { opacity: 1; }
+    .reset-btn:hover { color: var(--gold); border-color: var(--gold); }
 
-    /* FORMULAIRES & BOUTONS DROITS */
-    input[type="text"], select, textarea {
+    /* CHAMPS ET BOUTONS */
+    input[type="text"], select {
       width: 100%;
-      padding: 12px 14px;
+      padding: 14px 16px;
       border: 1px solid var(--line);
       border-radius: var(--radius-md);
       font-family: inherit;
       font-size: 14px;
-      margin-bottom: 12px;
-      background: #fff;
+      margin-bottom: 14px;
+      background: rgba(4, 10, 8, 0.6);
+      color: #fff;
+      outline: none;
+      transition: all 0.3s;
+    }
+    input[type="text"]:focus, select:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 12px var(--gold-glow);
     }
 
     .btn {
       width: 100%;
-      padding: 14px;
+      padding: 15px;
       border: none;
       border-radius: var(--radius-md);
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       font-size: 13px;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      transition: background 0.2s;
+      letter-spacing: 1.5px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
-    .btn-pine { background: var(--pine); color: var(--gold-light); border: 1px solid var(--gold); }
-    .btn-pine:hover { background: var(--pine-light); }
-    .btn-outline { background: transparent; border: 1px solid var(--pine); color: var(--pine); }
+    .btn-pine { 
+      background: linear-gradient(135deg, var(--gold), #b89128); 
+      color: #040a08; 
+      box-shadow: 0 8px 20px rgba(223, 183, 64, 0.25);
+    }
+    .btn-pine:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 12px 25px rgba(223, 183, 64, 0.4); 
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+    }
+    .btn-outline { 
+      background: transparent; 
+      border: 1px solid var(--line); 
+      color: var(--ink-muted); 
+    }
+    .btn-outline:hover { 
+      border-color: #e11d48; 
+      color: #e11d48; 
+      background: rgba(225, 29, 72, 0.05);
+    }
 
-    /* ONGLETS MODERNE & DROITS */
+    /* ONGLETS */
     .tabs { 
       display: flex; 
-      gap: 4px; 
-      margin: 24px 0 20px; 
-      border-bottom: 2px solid var(--line);
-      padding-bottom: 4px;
+      gap: 6px; 
+      margin: 26px 0 20px; 
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 8px;
     }
     .tab {
       flex: 1;
-      padding: 10px 4px;
+      padding: 12px 4px;
       border: none;
       background: transparent;
       color: var(--ink-muted);
       border-radius: var(--radius-md);
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       text-align: center;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      transition: all 0.2s ease;
+      letter-spacing: 1px;
+      transition: all 0.3s;
     }
-    .tab:hover { color: var(--pine); }
-    .tab.active { background: var(--pine); color: var(--gold-light); }
+    .tab:hover { color: #fff; }
+    .tab.active { 
+      background: var(--pine-light); 
+      color: var(--gold-bright); 
+      border: 1px solid var(--gold);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
 
-    .tab-content { display: none; }
+    .tab-content { display: none; animation: fadeIn 0.4s ease; }
     .tab-content.active { display: block; }
 
-    /* LISTES ET ELEMENTS DE CONTENU */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* CARTES DU CONTENU */
     .guest-list, .idea-list { list-style: none; padding: 0; margin: 0; }
     .guest-list li, .idea-list li {
       display: flex; 
       align-items: center; 
       justify-content: space-between;
       gap: 12px;
-      background: #ffffff; 
+      background: rgba(22, 61, 46, 0.3); 
       border: 1px solid var(--line); 
       border-radius: var(--radius-md);
       padding: 12px 16px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       font-weight: 500;
-      position: relative;
+      transition: transform 0.2s;
+    }
+    .guest-list li:hover, .idea-list li:hover {
+      transform: translateX(4px);
+      border-color: var(--gold);
     }
     .guest-info { display: flex; align-items: center; gap: 12px; }
     .avatar {
-      width: 32px; height: 32px;
+      width: 36px; height: 36px;
       border-radius: var(--radius-md);
       background: var(--pine);
-      color: var(--gold-light);
+      color: var(--gold-bright);
       display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 12px;
+      font-weight: 700; font-size: 13px;
       border: 1px solid var(--gold);
     }
 
+    /* GRID PHOTOS */
     .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .photo-card { position: relative; }
+    .photo-card { position: relative; overflow: hidden; border-radius: var(--radius-md); border: 1px solid var(--line); }
     .photo-grid img { 
       width: 100%; 
       aspect-ratio: 1/1; 
       object-fit: cover; 
-      border-radius: var(--radius-md); 
-      border: 1px solid var(--line); 
       display: block;
+      transition: transform 0.4s ease;
     }
+    .photo-card:hover img { transform: scale(1.08); }
 
     .upload-zone {
-      border: 2px dashed var(--line);
+      border: 2px dashed var(--gold);
       border-radius: var(--radius-md);
-      padding: 20px;
+      padding: 24px;
       text-align: center;
       cursor: pointer;
-      background: #fff;
-      margin-bottom: 16px;
+      background: rgba(223, 183, 64, 0.03);
+      margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+    .upload-zone:hover {
+      background: rgba(223, 183, 64, 0.08);
+      box-shadow: 0 0 20px var(--gold-glow);
     }
 
     .info-box {
-      background: #ffffff;
+      background: rgba(22, 61, 46, 0.25);
       border: 1px solid var(--line);
-      border-left: 3px solid var(--pine);
+      border-left: 3px solid var(--gold);
       border-radius: var(--radius-md);
       padding: 16px;
       margin-bottom: 12px;
     }
-    .info-box h3 { margin: 0 0 6px; font-size: 14px; color: var(--pine); text-transform: uppercase; letter-spacing: 0.5px; }
-    .info-box p { margin: 0; font-size: 13px; color: var(--ink-muted); line-height: 1.5; }
+    .info-box h3 { margin: 0 0 6px; font-size: 13px; color: var(--gold-bright); text-transform: uppercase; letter-spacing: 1px; }
+    .info-box p { margin: 0; font-size: 13px; color: var(--ink-muted); line-height: 1.6; }
 
-    /* BOUTONS ADMIN */
+    /* ADMIN BUTTONS */
     .delete-btn {
-      background: #ffe4e6; color: #e11d48; border: none;
+      background: rgba(225, 29, 72, 0.2); color: #fecdd3; border: 1px solid #e11d48;
       border-radius: var(--radius-md); padding: 6px 10px; font-size: 11px;
       font-weight: 600; cursor: pointer; display: none;
     }
@@ -259,16 +330,18 @@
     .delete-btn-photo {
       position: absolute; top: 6px; right: 6px;
       background: rgba(225, 29, 72, 0.9); color: #fff; border: none;
-      border-radius: var(--radius-md); width: 26px; height: 26px; cursor: pointer; display: none;
+      border-radius: var(--radius-md); width: 28px; height: 28px; cursor: pointer; display: none;
+      z-index: 10;
     }
     body.is-admin .delete-btn-photo { display: block; }
 
     .admin-trigger {
-      position: fixed; bottom: 12px; right: 12px;
+      position: fixed; bottom: 16px; right: 16px;
       background: var(--pine); color: var(--gold);
       border: 1px solid var(--gold); border-radius: var(--radius-md);
-      padding: 8px 14px; font-size: 11px; font-weight: 600; cursor: pointer;
+      padding: 8px 14px; font-size: 11px; font-weight: 700; cursor: pointer;
       z-index: 100; text-transform: uppercase; letter-spacing: 1px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
   </style>
 </head>
@@ -276,41 +349,41 @@
 
 <div class="card-container">
   
-  <!-- PHOTOS GOOGLE DRIVE LATÉRALES -->
+  <!-- PHOTOS DÉCORATIVES DRIVE (CUBÉES & CADRÉES PARFAITEMENT SANS BLANC) -->
   <img src="https://lh3.googleusercontent.com/d/1z7H6zfawpxE_Hu4PzxBonaqUiRRcVTCG" alt="Photo décor" class="deco-photo deco-left">
   <img src="https://lh3.googleusercontent.com/d/1bHOn_Vm6s7dohpLNy0qDUDDhnVm0XgHg" alt="Photo décor" class="deco-photo deco-right">
 
   <!-- ÉCRAN 1 : SCEAU D'INVITATION -->
   <div id="screenSeal" class="card show" style="text-align: center;">
-    <div style="font-size: 40px; margin-bottom: 10px;">✉️</div>
-    <h1 style="margin: 0 0 10px; font-size: 28px;">Invitation Officielle</h1>
-    <p style="color: var(--ink-muted); margin-bottom: 24px;">Vous êtes convié à célébrer un anniversaire très spécial.</p>
+    <div style="font-size: 48px; margin-bottom: 12px; filter: drop-shadow(0 0 10px var(--gold-glow));">✉️</div>
+    <h1 style="margin: 0 0 12px; font-size: 30px; color: var(--gold-bright);">Invitation Officielle</h1>
+    <p style="color: var(--ink-muted); font-size: 14px; margin-bottom: 28px; line-height: 1.6;">Vous êtes convié à célébrer un événement très spécial.</p>
     <button class="btn btn-pine" id="sealBtn">Ouvrir l'invitation</button>
   </div>
 
-  <!-- ÉCRAN 2 : FORMULAIRE DE RÉPONSE (RSVP) -->
+  <!-- ÉCRAN 2 : FORMULAIRE RSVP -->
   <div id="screenDetails" class="card">
-    <div class="site-header" style="margin-bottom: 20px;">
+    <div class="site-header" style="margin-bottom: 24px;">
       <div class="script">40 Ans</div>
       <h2>Serez-vous des nôtres ?</h2>
     </div>
     <input type="text" id="guestName" placeholder="Votre nom et prénom">
-    <div id="rsvpError" style="color: #e11d48; font-size: 12px; display: none; margin-bottom: 10px;">Veuillez indiquer votre nom.</div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+    <div id="rsvpError" style="color: #f43f5e; font-size: 12px; display: none; margin-bottom: 12px;">Veuillez indiquer votre nom.</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
       <button class="btn btn-pine" id="btnYes">Je viens ! 🎉</button>
-      <button class="btn btn-outline" id="btnNo">Impossible 😢</button>
+      <button class="btn btn-outline" id="btnNo">Absente) 😢</button>
     </div>
   </div>
 
-  <!-- ÉCRAN 3A : MESSAGE SI ABSENT -->
+  <!-- ÉCRAN 3A : ABSENT -->
   <div id="screenSad" class="card" style="text-align: center;">
-    <div class="script" style="font-family: 'Caveat', cursive; font-size: 32px; color: var(--pine);">Dommage !</div>
-    <h2>On espère vous voir la prochaine fois</h2>
-    <p style="color: var(--ink-muted); font-size: 14px;">Merci d'avoir répondu !</p>
-    <span class="reset-btn" style="color:var(--pine);" onclick="resetSession()">S'inscrire sous un autre nom</span>
+    <div class="script" style="font-family: 'Caveat', cursive; font-size: 36px; color: var(--gold-bright);">Dommage !</div>
+    <h2 style="margin-top: 6px;">On espère vous voir bientôt</h2>
+    <p style="color: var(--ink-muted); font-size: 14px; margin-bottom: 20px;">Merci d'avoir pris le temps de répondre.</p>
+    <span class="reset-btn" onclick="resetSession()">S'inscrire sous un autre nom</span>
   </div>
 
-  <!-- ÉCRAN 3B : SITE PRINCIPAL (SI PRÉSENT) -->
+  <!-- ÉCRAN 3B : SITE PRINCIPAL -->
   <div id="screenSite" class="card">
     <div class="site-header">
       <div class="script">C'est noté !</div>
@@ -329,37 +402,35 @@
 
     <!-- ONGLET 1 : INVITÉS -->
     <div id="tab-invites" class="tab-content active">
-      <ul class="guest-list" id="guestList">
-        <!-- Chargé dynamiquement via Firebase/Local -->
-      </ul>
+      <ul class="guest-list" id="guestList"></ul>
     </div>
 
     <!-- ONGLET 2 : PHOTOS -->
     <div id="tab-photos" class="tab-content">
       <div class="upload-zone" onclick="document.getElementById('photoInput').click()">
-        <span style="font-size: 20px;">📷</span>
-        <div style="font-size: 13px; font-weight: 600; color: var(--pine);">Ajouter une photo</div>
+        <span style="font-size: 24px;">📷</span>
+        <div style="font-size: 13px; font-weight: 700; color: var(--gold-bright); margin-top: 6px;">Ajouter vos photos de la fête</div>
         <input type="file" id="photoInput" accept="image/*" style="display:none;">
       </div>
       <div id="photoEmpty" style="text-align:center; color: var(--ink-muted); font-size: 13px; display:none; padding: 10px;">Aucune photo partagée pour l'instant.</div>
       <div class="photo-grid" id="photoGrid"></div>
     </div>
 
-    <!-- ONGLET 3 : IDÉES MUSIQUE / ACTIVITÉS -->
+    <!-- ONGLET 3 : IDÉES -->
     <div id="tab-idees" class="tab-content">
       <div style="display: grid; gap: 8px; margin-bottom: 20px;">
         <select id="ideaType">
-          <option value="Musique">🎵 Musique</option>
-          <option value="Activité">🎉 Activité</option>
+          <option value="Musique">🎵 Chanson / Musique</option>
+          <option value="Activité">🎉 Animation / Activité</option>
         </select>
-        <input type="text" id="ideaText" placeholder="Titre / Idée d'animation">
+        <input type="text" id="ideaText" placeholder="Proposer un titre ou un jeu...">
         <input type="text" id="ideaWho" placeholder="Votre nom">
-        <button class="btn btn-pine" id="ideaSubmit">Proposer</button>
+        <button class="btn btn-pine" id="ideaSubmit">Proposer l'idée</button>
       </div>
       <ul class="idea-list" id="ideaList"></ul>
     </div>
 
-    <!-- ONGLET 4 : INFOS PRATIQUES (NOUVEAU) -->
+    <!-- ONGLET 4 : INFOS PRATIQUES -->
     <div id="tab-infos" class="tab-content">
       <div class="info-box">
         <h3>📍 Adresse</h3>
@@ -379,7 +450,7 @@
 
 </div>
 
-<!-- Bouton d'accès Admin -->
+<!-- BOUTON ADMIN -->
 <button class="admin-trigger" id="adminBtn">🔒 Admin</button>
 
 <script>
@@ -387,7 +458,7 @@
    1) CONFIGURATION FIREBASE INTEGRÉE
    ========================================================= */
 const firebaseConfig = {
-  // Vos identifiants Firebase restent valides ici s'ils sont initialisés
+  // Vos identifiants Firebase restent valides
 };
 
 let db = null;
@@ -399,10 +470,10 @@ try {
   }
   db = firebase.firestore();
   firebaseReady = true;
-} catch(e) { console.warn("Firebase fonctionnant en mode local :", e); }
+} catch(e) { console.warn("Firebase hors-ligne / mode local :", e); }
 
 /* =========================================================
-   2) Fallback local (sauvegarde hors-ligne)
+   2) FALLBACK LOCAL
    ========================================================= */
 const localFallback = {
   guests: JSON.parse(localStorage.getItem('fb_guests')||'[]'),
@@ -417,7 +488,7 @@ function saveLocal(){
 }
 
 /* =========================================================
-   3) Gestion de la session utilisateur
+   3) SESSION ET ÉCRANS
    ========================================================= */
 const screenSeal = document.getElementById('screenSeal');
 const screenDetails = document.getElementById('screenDetails');
@@ -449,7 +520,7 @@ function resetSession() {
 }
 
 /* =========================================================
-   4) Navigation entre écrans & Réponses RSVP
+   4) RSVP & ACTIONS
    ========================================================= */
 document.getElementById('sealBtn').addEventListener('click', ()=>{
   screenSeal.classList.remove('show');
@@ -497,7 +568,7 @@ async function recordResponse(name, coming){
 }
 
 /* =========================================================
-   5) Gestion des Onglets
+   5) ONGLETS
    ========================================================= */
 function switchTab(tabId, element) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -508,7 +579,7 @@ function switchTab(tabId, element) {
 }
 
 /* =========================================================
-   6) Gestion de la Liste d'Invités
+   6) INVITÉS
    ========================================================= */
 function initials(name){
   return name.trim().split(/\s+/).slice(0,2).map(w=>w[0]?.toUpperCase()||'').join('');
@@ -526,7 +597,7 @@ function loadGuests(){
       <li>
         <div class="guest-info">
           <div class="avatar">${initials(g.nom)}</div>
-          <span>${g.nom}</span>
+          <span style="color:#fff;">${g.nom}</span>
         </div>
         <button class="delete-btn" onclick="deleteGuest('${g.id}')">Supprimer</button>
       </li>
@@ -543,7 +614,7 @@ function loadGuests(){
 }
 
 async function deleteGuest(id) {
-  if(!confirm("Voulez-vous vraiment supprimer cet invité ?")) return;
+  if(!confirm("Supprimer cet invité ?")) return;
   if(firebaseReady){
     await db.collection('reponses').doc(id).delete();
   } else {
@@ -554,7 +625,7 @@ async function deleteGuest(id) {
 }
 
 /* =========================================================
-   7) Gestion des Photos
+   7) PHOTOS
    ========================================================= */
 const photoInput = document.getElementById('photoInput');
 photoInput.addEventListener('change', (e)=>{
@@ -610,7 +681,7 @@ async function deletePhoto(id) {
 }
 
 /* =========================================================
-   8) Idées musique / activités
+   8) IDÉES
    ========================================================= */
 document.getElementById('ideaSubmit').addEventListener('click', async ()=>{
   const type = document.getElementById('ideaType').value;
@@ -636,8 +707,8 @@ function loadIdeas(){
     list.innerHTML = ideas.map(i=>`
       <li>
         <div>
-          <span style="font-size:11px; font-weight:bold; color:var(--pine); text-transform:uppercase;">${i.type === 'Musique' ? '🎵 Musique' : '🎉 Activité'}</span>
-          <div style="font-size:14px; margin: 2px 0;">${i.texte}</div>
+          <span style="font-size:10px; font-weight:bold; color:var(--gold-bright); text-transform:uppercase;">${i.type === 'Musique' ? '🎵 Musique' : '🎉 Activité'}</span>
+          <div style="font-size:14px; margin: 2px 0; color:#fff;">${i.texte}</div>
           <div style="font-size:11px; color:var(--ink-muted);">par ${i.nom}</div>
         </div>
         <button class="delete-btn" onclick="deleteIdea('${i.id}')">Supprimer</button>
@@ -666,7 +737,7 @@ async function deleteIdea(id) {
 }
 
 /* =========================================================
-   9) Connexion Administration
+   9) ADMIN
    ========================================================= */
 const ADMIN_PASSWORD = "admin123";
 
