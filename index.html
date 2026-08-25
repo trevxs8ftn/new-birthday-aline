@@ -40,6 +40,7 @@
 
     h1, h2, .display { font-family: 'Playfair Display', serif; }
 
+    /* PHOTO DE FOND FIXE */
     .bg-photo {
       position: fixed;
       top: 0; left: 0;
@@ -59,6 +60,7 @@
       background: radial-gradient(circle at 50% 50%, rgba(4,10,8,0.55), rgba(4,10,8,0.92));
     }
 
+    /* BANNIÈRE BOUGIE */
     .candle-banner {
       width: 100%;
       height: 160px;
@@ -75,6 +77,7 @@
       to { opacity: 1; transform: scale(1); }
     }
 
+    /* CONTENEUR ET PHOTOS LATÉRALES */
     .card-container {
       position: relative;
       width: 100%;
@@ -283,8 +286,9 @@
       flex-shrink: 0;
     }
 
+    /* PHOTOS */
     .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .photo-card { position: relative; overflow: hidden; border-radius: 2px; }
+    .photo-card { position: relative; overflow: hidden; border-radius: 2px; cursor: pointer; }
     .photo-grid img {
       width: 100%;
       aspect-ratio: 1/1;
@@ -307,6 +311,7 @@
       border-color: var(--gold);
     }
 
+    /* BULLES D'INFO */
     .info-box {
       padding: 20px 0;
       border-top: 1px solid var(--line);
@@ -317,9 +322,60 @@
     }
     .info-box h3 { margin: 0 0 8px; font-size: 11px; color: var(--gold-bright); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
     .info-box p { margin: 0; font-size: 14px; color: var(--ink-muted); line-height: 1.75; }
+    .info-img {
+      width: 100%;
+      max-height: 250px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-top: 12px;
+      cursor: pointer;
+      border: 1px solid var(--line);
+    }
 
-    /* BOUTONS D'ACTION ADMIN */
-    .delete-btn, .edit-btn, .move-btn {
+    /* LIGHTBOX (AGRANDISSEMENT DE PHOTO) */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 10, 8, 0.95);
+      z-index: 1000;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(8px);
+    }
+    .lightbox.active { display: flex; }
+    .lightbox img {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 4px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+    .lightbox-back {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(223, 183, 64, 0.15);
+      border: 1px solid var(--gold);
+      color: var(--gold-bright);
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      transition: all 0.3s ease;
+    }
+    .lightbox-back:hover {
+      background: var(--gold);
+      color: #040a08;
+    }
+
+    /* ADMIN */
+    .delete-btn, .edit-btn {
       background: none;
       border: none;
       padding: 0;
@@ -334,10 +390,9 @@
       flex-shrink: 0;
     }
     .delete-btn { color: #f87171; }
-    .edit-btn { color: var(--gold-bright); margin-right: 8px; }
-    .move-btn { color: #93c5fd; margin-right: 8px; text-decoration: none; }
+    .edit-btn { color: var(--gold-bright); margin-right: 10px; }
 
-    body.is-admin .delete-btn, body.is-admin .edit-btn, body.is-admin .move-btn { display: inline-block; }
+    body.is-admin .delete-btn, body.is-admin .edit-btn { display: inline-block; }
 
     .delete-btn-photo {
       position: absolute; top: 8px; right: 8px;
@@ -365,6 +420,7 @@
     }
     .admin-trigger:hover { border-color: var(--gold); color: var(--gold-bright); }
 
+    /* AJOUT D'UNE BULLE D'INFO EN ADMIN */
     .admin-add-box {
       display: none;
       padding-top: 22px;
@@ -375,6 +431,7 @@
     .admin-add-box input[type="text"] { margin-bottom: 16px; }
     .admin-add-box .btn { padding: 14px; font-size: 11px; }
 
+    /* FAMILLE */
     .family-section {
       margin: 4px 0 24px;
       padding-top: 20px;
@@ -572,12 +629,61 @@
     </div>
 
     <div id="tab-infos" class="tab-content active">
-      <div id="infoListContainer"></div>
+      
+      <div class="info-box" data-info-id="default-fete">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+          <h3 style="margin-bottom:4px;">🎉 Une Fête Surprise en Secret !</h3>
+          <div>
+            <button class="edit-btn" onclick="editInfo('default-fete')">Modifier</button>
+            <button class="delete-btn" style="flex-shrink:0;" onclick="deleteDefaultInfo('default-fete')">Supprimer</button>
+          </div>
+        </div>
+        <p>À l’occasion des 40 ans d'Aline, une belle journée s'organise en secret. La seule consigne : <strong>gardons précieusement le secret jusqu’au bout ! 🤫</strong></p>
+      </div>
+
+      <div class="info-box" data-info-id="default-rdv">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+          <h3 style="margin-bottom:4px;">⏰ Rendez-vous indispensable</h3>
+          <div>
+            <button class="edit-btn" onclick="editInfo('default-rdv')">Modifier</button>
+            <button class="delete-btn" style="flex-shrink:0;" onclick="deleteDefaultInfo('default-rdv')">Supprimer</button>
+          </div>
+        </div>
+        <p>Rendez-vous le <strong>Samedi 26 septembre 2026 avant 12h00</strong> pour être bien présents avant son arrivée et lui faire la surprise !</p>
+      </div>
+
+      <div class="info-box" data-info-id="default-programme">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+          <h3 style="margin-bottom:4px;">🥂 Au Programme du Week-end</h3>
+          <div>
+            <button class="edit-btn" onclick="editInfo('default-programme')">Modifier</button>
+            <button class="delete-btn" style="flex-shrink:0;" onclick="deleteDefaultInfo('default-programme')">Supprimer</button>
+          </div>
+        </div>
+        <p>La journée se poursuivra tous ensemble autour d’un apéritif, d’un déjeuner, d’un après-midi détente et, si la météo le permet, d’une baignade 🏊. Le soir, place au dîner et surtout à la fête… avec une soirée dansante ! 🪩</p>
+      </div>
+
+      <div class="info-box" data-info-id="default-adresse">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+          <h3 style="margin-bottom:4px;">📍 Adresse</h3>
+          <div>
+            <button class="edit-btn" onclick="editInfo('default-adresse')">Modifier</button>
+            <button class="delete-btn" style="flex-shrink:0;" onclick="deleteDefaultInfo('default-adresse')">Supprimer</button>
+          </div>
+        </div>
+        <p>3 rue du Ried, Hagenthal-le-Bas<br><small style="color:var(--ink-muted);">Stationnement facile dans la rue et aux alentours.</small></p>
+      </div>
+
+      <div id="customInfoList"></div>
 
       <div class="admin-add-box" id="adminAddInfoBox">
         <h3 style="margin:0 0 10px; font-size:12px; color:var(--gold-bright); text-transform:uppercase; letter-spacing:1px;">🔓 Ajouter une bulle d'info</h3>
         <input type="text" id="newInfoTitle" placeholder="Titre de la bulle (ex: 🎂 Le gâteau)">
         <input type="text" id="newInfoText" placeholder="Description de la bulle">
+        <div style="margin-bottom:16px;">
+          <label style="font-size:11px; color:var(--gold-bright); display:block; margin-bottom:6px;">Photo optionnelle :</label>
+          <input type="file" id="newInfoPhoto" accept="image/*" style="font-size:12px; color:var(--ink-muted);">
+        </div>
         <button class="btn btn-pine" id="newInfoSubmit">Ajouter la bulle</button>
       </div>
     </div>
@@ -608,8 +714,7 @@
     <div id="tab-photos" class="tab-content">
       <div class="upload-zone" onclick="document.getElementById('photoInput').click()">
         <span style="font-size: 24px;">📷</span>
-        <div style="font-size: 13px; font-weight: 700; color: var(--gold-bright); margin-top: 6px;">Ajouter vos photos de la fête</div>
-        <div id="uploadStatus" style="font-size: 11px; color: var(--ink-muted); margin-top: 4px;"></div>
+        <div style="font-size: 13px; font-weight: 700; color: var(--gold-bright); margin-top: 6px;">Ajouter vos photos</div>
         <input type="file" id="photoInput" accept="image/*" style="display:none;">
       </div>
       <div id="photoEmpty" style="text-align:center; color: var(--ink-muted); font-size: 13px; display:none; padding: 10px;">Aucune photo partagée pour l'instant.</div>
@@ -621,6 +726,12 @@
 </div>
 
 <button class="admin-trigger" id="adminBtn">🔒 Admin</button>
+
+<!-- LIGHTBOX POUR AGRANDIR LES PHOTOS -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-back" id="lightboxBack">⬅️ Retour</button>
+  <img id="lightboxImg" src="" alt="Photo agrandie">
+</div>
 
 <script>
 /* =========================================================
@@ -647,20 +758,14 @@ try {
 } catch(e) { console.warn("Firebase hors-ligne / mode local :", e); }
 
 /* =========================================================
-   2) FALLBACK LOCAL & DONNÉES PAR DÉFAUT
+   2) FALLBACK LOCAL
    ========================================================= */
-const DEFAULT_INFOS = [
-  { id: 'default-fete', title: "🎉 Une Fête Surprise en Secret !", text: "À l’occasion des 40 ans d'Aline, une belle journée s'organise en secret. La seule consigne : <strong>gardons précieusement le secret jusqu’au bout ! 🤫</strong>", order: 1 },
-  { id: 'default-rdv', title: "⏰ Rendez-vous indispensable", text: "Rendez-vous le <strong>Samedi 26 septembre 2026 avant 12h00</strong> pour être bien présents avant son arrivée et lui faire la surprise !", order: 2 },
-  { id: 'default-programme', title: "🥂 Au Programme du Week-end", text: "La journée se poursuivra tous ensemble autour d’un apéritif, d’un déjeuner, d’un après-midi détente et, si la météo le permet, d’une baignade 🏊. Le soir, place au dîner et surtout à la fête… avec une soirée dansante ! 🪩", order: 3 },
-  { id: 'default-adresse', title: "📍 Adresse", text: "3 rue du Ried, Hagenthal-le-Bas<br><small style=\"color:var(--ink-muted);\">Stationnement facile dans la rue et aux alentours.</small>", order: 4 }
-];
-
 const localFallback = {
   guests: JSON.parse(localStorage.getItem('fb_guests')||'[]'),
   photos: JSON.parse(localStorage.getItem('fb_photos')||'[]'),
   ideas: JSON.parse(localStorage.getItem('fb_ideas')||'[]'),
-  infos: JSON.parse(localStorage.getItem('fb_infos')||JSON.stringify(DEFAULT_INFOS))
+  infos: JSON.parse(localStorage.getItem('fb_infos')||'[]'),
+  hiddenInfos: JSON.parse(localStorage.getItem('fb_hiddenInfos')||'[]')
 };
 
 function saveLocal(){
@@ -668,10 +773,33 @@ function saveLocal(){
   localStorage.setItem('fb_photos', JSON.stringify(localFallback.photos));
   localStorage.setItem('fb_ideas', JSON.stringify(localFallback.ideas));
   localStorage.setItem('fb_infos', JSON.stringify(localFallback.infos));
+  localStorage.setItem('fb_hiddenInfos', JSON.stringify(localFallback.hiddenInfos));
 }
 
 /* =========================================================
-   3) SESSION ET ÉCRANS
+   3) LIGHTBOX (AGRANDISSEMENT DE PHOTOS ET RETOUR)
+   ========================================================= */
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightboxImg');
+const lightboxBack = document.getElementById('lightboxBack');
+
+function openLightbox(url) {
+  lightboxImg.src = url;
+  lightbox.classList.add('active');
+}
+
+lightboxBack.addEventListener('click', () => {
+  lightbox.classList.remove('active');
+});
+
+lightbox.addEventListener('click', (e) => {
+  if (e.target === lightbox) {
+    lightbox.classList.remove('active');
+  }
+});
+
+/* =========================================================
+   4) SESSION ET ÉCRANS
    ========================================================= */
 const screenSeal = document.getElementById('screenSeal');
 const screenDetails = document.getElementById('screenDetails');
@@ -692,7 +820,8 @@ window.addEventListener('DOMContentLoaded', () => {
       loadGuests();
       loadPhotos();
       loadIdeas();
-      loadInfos();
+      loadCustomInfos();
+      loadHiddenDefaults();
     } else {
       screenSad.classList.add('show');
     }
@@ -705,7 +834,7 @@ function resetSession() {
 }
 
 /* =========================================================
-   4) RSVP & ACTIONS
+   5) RSVP & ACTIONS
    ========================================================= */
 document.getElementById('sealBtn').addEventListener('click', ()=>{
   screenSeal.classList.remove('show');
@@ -764,6 +893,8 @@ document.getElementById('btnNo').addEventListener('click', async ()=>{
   if(!name){ rsvpError.style.display='block'; return; }
   rsvpError.style.display='none';
   rsvpSubmitting = true;
+  document.getElementById('btnNo').disabled = true;
+  document.getElementById('btnYes').disabled = true;
 
   await recordResponse(name, false, []);
   localStorage.setItem('user_rsvp', JSON.stringify({ repondu: true, vient: false, nom: name }));
@@ -777,6 +908,8 @@ document.getElementById('btnYes').addEventListener('click', async ()=>{
   if(!name){ rsvpError.style.display='block'; return; }
   rsvpError.style.display='none';
   rsvpSubmitting = true;
+  document.getElementById('btnNo').disabled = true;
+  document.getElementById('btnYes').disabled = true;
 
   await recordResponse(name, true, familyMembers);
   localStorage.setItem('user_rsvp', JSON.stringify({ repondu: true, vient: true, nom: name }));
@@ -787,7 +920,8 @@ document.getElementById('btnYes').addEventListener('click', async ()=>{
   loadGuests();
   loadPhotos();
   loadIdeas();
-  loadInfos();
+  loadCustomInfos();
+  loadHiddenDefaults();
   familyMembers = [];
 });
 
@@ -808,7 +942,7 @@ async function recordResponse(name, coming, famille){
 }
 
 /* =========================================================
-   5) ONGLETS
+   6) ONGLETS
    ========================================================= */
 function switchTab(tabId, element) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -818,7 +952,7 @@ function switchTab(tabId, element) {
 }
 
 /* =========================================================
-   6) INVITÉS
+   7) INVITÉS
    ========================================================= */
 function initials(name){
   return name.trim().split(/\s+/).slice(0,2).map(w=>w[0]?.toUpperCase()||'').join('');
@@ -904,7 +1038,7 @@ async function deleteGuest(id){
 }
 
 /* =========================================================
-   7) PHOTOS ET COMPRESSION AUTOMATIQUE DEPUIS TELEPHONE
+   8) PHOTOS (AVEC AGRANDISSEMENT AU CLIC)
    ========================================================= */
 function loadPhotos(){
   const grid = document.getElementById('photoGrid');
@@ -914,8 +1048,8 @@ function loadPhotos(){
     if(!photos.length){ empty.style.display='block'; grid.innerHTML=''; return; }
     empty.style.display='none';
     grid.innerHTML = photos.map(p=>`
-      <div class="photo-card">
-        <button class="delete-btn-photo" onclick="deletePhoto('${p.id}')">✕</button>
+      <div class="photo-card" onclick="openLightbox('${p.url}')">
+        <button class="delete-btn-photo" onclick="event.stopPropagation(); deletePhoto('${p.id}')">✕</button>
         <img src="${p.url}" alt="Photo de fête">
       </div>
     `).join('');
@@ -931,63 +1065,21 @@ function loadPhotos(){
   }
 }
 
-// Redimensionne et compresse l'image pour dépasser le 1 Mo
-function compressImage(file, maxWidth = 1200, quality = 0.7) {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = (e) => {
-      const img = new Image();
-      img.src = e.target.result;
-      img.onload = () => {
-        let width = img.width;
-        let height = img.height;
-
-        if (width > maxWidth) {
-          height = Math.round((height * maxWidth) / width);
-          width = maxWidth;
-        }
-
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-
-        const dataUrl = canvas.toDataURL('image/jpeg', quality);
-        resolve(dataUrl);
-      };
-    };
-  });
-}
-
-document.getElementById('photoInput').addEventListener('change', async (e)=>{
+document.getElementById('photoInput').addEventListener('change', (e)=>{
   const file = e.target.files[0];
   if(!file) return;
-
-  const statusEl = document.getElementById('uploadStatus');
-  statusEl.textContent = "Optimization et envoi en cours...";
-
-  try {
-    const compressedDataUrl = await compressImage(file, 1200, 0.7);
-
+  const reader = new FileReader();
+  reader.onload = async (evt)=>{
+    const url = evt.target.result;
     if(firebaseReady){
-      await db.collection('photos').add({
-        url: compressedDataUrl,
-        date: firebase.firestore.FieldValue.serverTimestamp()
-      });
+      try { await db.collection('photos').add({ url, date: firebase.firestore.FieldValue.serverTimestamp() }); } catch(err){ console.error(err); }
     } else {
-      localFallback.photos.push({id: Date.now().toString(), url: compressedDataUrl});
+      localFallback.photos.push({id: Date.now().toString(), url});
       saveLocal();
       loadPhotos();
     }
-    statusEl.textContent = "Photo ajoutée avec succès !";
-    setTimeout(() => { statusEl.textContent = ""; }, 3000);
-  } catch(err) {
-    console.error("Erreur d'envoi :", err);
-    statusEl.textContent = "Erreur lors de l'envoi.";
-  }
-  e.target.value = '';
+  };
+  reader.readAsDataURL(file);
 });
 
 async function deletePhoto(id){
@@ -1002,7 +1094,7 @@ async function deletePhoto(id){
 }
 
 /* =========================================================
-   8) IDÉES
+   9) IDÉES
    ========================================================= */
 function loadIdeas(){
   const list = document.getElementById('ideaList');
@@ -1066,45 +1158,30 @@ async function deleteIdea(id){
 }
 
 /* =========================================================
-   9) INFOS, BULLES, ET CHANGEMENT D'ORDRE
+   10) INFOS ET BULLES PERSONNALISÉES (AVEC PHOTO ET MODIFICATION)
    ========================================================= */
-let currentInfosList = [];
+function loadCustomInfos(){
+  const container = document.getElementById('customInfoList');
 
-function loadInfos(){
-  const container = document.getElementById('infoListContainer');
-
-  const render = (infos) => {
-    // Si la base est vide sur Firestore, on l'initialise avec les valeurs par défaut
-    if(infos.length === 0 && firebaseReady) {
-      DEFAULT_INFOS.forEach(item => {
-        db.collection('infos').doc(item.id).set(item);
-      });
-      return;
-    }
-
-    // Tri par numéro d'ordre
-    infos.sort((a,b) => (a.order || 0) - (b.order || 0));
-    currentInfosList = infos;
-
-    container.innerHTML = infos.map((i, index) => `
+  const render = (infos)=>{
+    container.innerHTML = infos.map(i=>`
       <div class="info-box" id="info-box-${i.id}">
         <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
-          <h3 style="margin-bottom:4px;">${i.title}</h3>
+          <h3 class="info-title" style="margin-bottom:4px;">${i.title}</h3>
           <div>
-            ${index > 0 ? `<button class="move-btn" onclick="moveInfo(${index}, -1)">▲</button>` : ''}
-            ${index < infos.length - 1 ? `<button class="move-btn" onclick="moveInfo(${index}, 1)">▼</button>` : ''}
-            <button class="edit-btn" onclick="editInfo('${i.id}')">Modifier</button>
-            <button class="delete-btn" onclick="deleteInfo('${i.id}')">Supprimer</button>
+            <button class="edit-btn" onclick="editInfo('${i.id}', false)">Modifier</button>
+            <button class="delete-btn" onclick="deleteCustomInfo('${i.id}')">Supprimer</button>
           </div>
         </div>
-        <div>${i.text}</div>
+        <p class="info-text">${i.text}</p>
+        ${i.imageUrl ? `<img src="${i.imageUrl}" class="info-img" onclick="openLightbox('${i.imageUrl}')" alt="Photo info">` : ''}
       </div>
     `).join('');
   };
 
   if(firebaseReady){
-    db.collection('infos').onSnapshot(snap => {
-      const data = snap.docs.map(d => ({id: d.id, ...d.data()}));
+    db.collection('infos').onSnapshot(snap=>{
+      const data = snap.docs.map(d=>({id: d.id, ...d.data()}));
       render(data);
     }, err => render(localFallback.infos));
   } else {
@@ -1115,83 +1192,144 @@ function loadInfos(){
 document.getElementById('newInfoSubmit').addEventListener('click', async ()=>{
   const title = document.getElementById('newInfoTitle').value.trim();
   const text = document.getElementById('newInfoText').value.trim();
+  const fileInput = document.getElementById('newInfoPhoto');
+  const file = fileInput.files[0];
+
   if(!title || !text) return;
 
-  const maxOrder = currentInfosList.reduce((max, item) => Math.max(max, item.order || 0), 0);
-  const newOrder = maxOrder + 1;
+  const saveInfo = async (imageUrl = null) => {
+    if(firebaseReady){
+      try {
+        await db.collection('infos').add({
+          title, text, imageUrl, date: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch(e){ console.error(e); }
+    } else {
+      localFallback.infos.push({id: Date.now().toString(), title, text, imageUrl});
+      saveLocal();
+      loadCustomInfos();
+    }
 
-  if(firebaseReady){
-    try {
-      await db.collection('infos').add({ title, text, order: newOrder });
-    } catch(e){ console.error(e); }
+    document.getElementById('newInfoTitle').value = '';
+    document.getElementById('newInfoText').value = '';
+    fileInput.value = '';
+  };
+
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => saveInfo(e.target.result);
+    reader.readAsDataURL(file);
   } else {
-    localFallback.infos.push({id: Date.now().toString(), title, text, order: newOrder});
-    saveLocal();
-    loadInfos();
+    saveInfo();
   }
-
-  document.getElementById('newInfoTitle').value = '';
-  document.getElementById('newInfoText').value = '';
 });
 
-async function moveInfo(index, direction) {
-  const targetIndex = index + direction;
-  if(targetIndex < 0 || targetIndex >= currentInfosList.length) return;
-
-  const itemA = currentInfosList[index];
-  const itemB = currentInfosList[targetIndex];
-
-  const orderA = itemA.order || (index + 1);
-  const orderB = itemB.order || (targetIndex + 1);
-
-  if(firebaseReady){
-    const batch = db.batch();
-    batch.update(db.collection('infos').doc(itemA.id), { order: orderB });
-    batch.update(db.collection('infos').doc(itemB.id), { order: orderA });
-    await batch.commit();
-  } else {
-    itemA.order = orderB;
-    itemB.order = orderA;
-    saveLocal();
-    loadInfos();
-  }
-}
-
-async function editInfo(id) {
-  const item = currentInfosList.find(i => i.id === id);
-  if (!item) return;
-
-  const newTitle = prompt("Nouveau titre :", item.title.replace(/<[^>]*>/g, ''));
-  if (newTitle === null) return;
-
-  const newText = prompt("Nouveau texte :", item.text.replace(/<[^>]*>/g, ''));
-  if (newText === null) return;
-
-  if (firebaseReady) {
-    try {
-      await db.collection('infos').doc(id).update({ title: newTitle, text: newText });
-    } catch (e) { console.error(e); }
-  } else {
-    item.title = newTitle;
-    item.text = newText;
-    saveLocal();
-    loadInfos();
-  }
-}
-
-async function deleteInfo(id){
+async function deleteCustomInfo(id){
   if(!confirm("Supprimer cette bulle d'information ?")) return;
   if(firebaseReady){
     try { await db.collection('infos').doc(id).delete(); } catch(e){ console.error(e); }
   } else {
     localFallback.infos = localFallback.infos.filter(i=>i.id !== id);
     saveLocal();
-    loadInfos();
+    loadCustomInfos();
+  }
+}
+
+async function editInfo(id, isDefault = true) {
+  let box, titleEl, textEl;
+
+  if (isDefault || id.startsWith('default-')) {
+    box = document.querySelector(`.info-box[data-info-id="${id}"]`);
+    titleEl = box.querySelector('h3');
+    textEl = box.querySelector('p');
+  } else {
+    box = document.getElementById(`info-box-${id}`);
+    titleEl = box.querySelector('.info-title');
+    textEl = box.querySelector('.info-text');
+  }
+
+  const currentTitle = titleEl.innerText;
+  const currentText = textEl.innerText;
+
+  const newTitle = prompt("Nouveau titre de la bulle d'info :", currentTitle);
+  if (newTitle === null) return;
+
+  const newText = prompt("Nouveau texte de la bulle d'info :", currentText);
+  if (newText === null) return;
+
+  titleEl.innerText = newTitle;
+  textEl.innerText = newText;
+
+  if (!id.startsWith('default-')) {
+    if (firebaseReady) {
+      try {
+        await db.collection('infos').doc(id).update({
+          title: newTitle,
+          text: newText
+        });
+      } catch (e) { console.error("Erreur de mise à jour Firebase :", e); }
+    } else {
+      const infoIndex = localFallback.infos.findIndex(item => item.id === id);
+      if (infoIndex !== -1) {
+        localFallback.infos[infoIndex].title = newTitle;
+        localFallback.infos[infoIndex].text = newText;
+        saveLocal();
+      }
+    }
+  } else {
+    if (firebaseReady) {
+      try {
+        await db.collection('infosDefaults').doc(id).set({
+          title: newTitle,
+          text: newText
+        });
+      } catch (e) { console.error(e); }
+    } else {
+      if (!localFallback.modifiedDefaults) localFallback.modifiedDefaults = {};
+      localFallback.modifiedDefaults[id] = { title: newTitle, text: newText };
+      localStorage.setItem('fb_modifiedDefaults', JSON.stringify(localFallback.modifiedDefaults));
+    }
+  }
+}
+
+function applyHiddenDefaults(hiddenArray){
+  document.querySelectorAll('.info-box[data-info-id]').forEach(el=>{
+    const id = el.getAttribute('data-info-id');
+    if(hiddenArray.includes(id)){
+      el.style.display = 'none';
+    } else {
+      el.style.display = 'block';
+    }
+  });
+}
+
+async function deleteDefaultInfo(id){
+  if(!confirm("Supprimer cette bulle d'information ?")) return;
+  if(firebaseReady){
+    try {
+      await db.collection('infosHidden').doc(id).set({ hidden: true });
+    } catch(e) { console.error(e); }
+  } else {
+    if(!localFallback.hiddenInfos.includes(id)) localFallback.hiddenInfos.push(id);
+    saveLocal();
+    applyHiddenDefaults(localFallback.hiddenInfos);
+  }
+}
+
+function loadHiddenDefaults(){
+  if(firebaseReady){
+    db.collection('infosHidden').onSnapshot(snap=>{
+      applyHiddenDefaults(snap.docs.map(d=>d.id));
+    }, err => {
+      applyHiddenDefaults(localFallback.hiddenInfos);
+    });
+  } else {
+    applyHiddenDefaults(localFallback.hiddenInfos);
   }
 }
 
 /* =========================================================
-   10) ADMIN (MOT DE PASSE : Nous1502!)
+   11) ADMIN (MOT DE PASSE : Nous1502!)
    ========================================================= */
 const ADMIN_PASSWORD = "Nous1502!";
 
@@ -1205,7 +1343,7 @@ document.getElementById('adminBtn').addEventListener('click', ()=>{
     if(pwd === ADMIN_PASSWORD) {
       document.body.classList.add('is-admin');
       document.getElementById('adminBtn').textContent = "🔓 Quitter Admin";
-      alert("Mode administrateur activé ! Vous pouvez désormais ordonner, modifier ou supprimer des éléments.");
+      alert("Mode administrateur activé ! Vous pouvez maintenant modifier ou supprimer des éléments.");
     } else if(pwd !== null) {
       alert("Mot de passe incorrect.");
     }
