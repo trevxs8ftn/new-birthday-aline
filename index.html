@@ -40,7 +40,7 @@
 
     h1, h2, .display { font-family: 'Playfair Display', serif; }
 
-    /* PHOTO DE FOND FIXE */
+    /* PHOTO DE FOND FIXE (RESTE EN PLACE QUAND ON SCROLL) */
     .bg-photo {
       position: fixed;
       top: 0; left: 0;
@@ -60,7 +60,7 @@
       background: radial-gradient(circle at 50% 50%, rgba(4,10,8,0.55), rgba(4,10,8,0.92));
     }
 
-    /* BANNÈRE BOUGIE */
+    /* BANNIÈRE BOUGIE — flotte librement, sans cadre */
     .candle-banner {
       width: 100%;
       height: 160px;
@@ -77,29 +77,6 @@
       to { opacity: 1; transform: scale(1); }
     }
 
-    /* NOUVELLE PHOTO AJOUTÉE AVEC ANIMATION */
-    .aline-featured-photo {
-      width: 100%;
-      max-height: 280px;
-      object-fit: cover;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), 0 0 15px var(--gold-glow);
-      margin: 16px 0 20px;
-      cursor: pointer;
-      transition: transform 0.4s ease, box-shadow 0.4s ease;
-      animation: alinePhotoFade 1.2s ease-out;
-    }
-    .aline-featured-photo:hover {
-      transform: scale(1.02);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8), 0 0 25px var(--gold-glow);
-    }
-
-    @keyframes alinePhotoFade {
-      from { opacity: 0; transform: translateY(10px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
     /* CONTENEUR ET PHOTOS LATÉRALES */
     .card-container {
       position: relative;
@@ -107,6 +84,7 @@
       max-width: 560px;
     }
 
+    /* ÉCRANS — plus de carte fermée, le contenu respire sur le fond */
     .card {
       display: none;
       position: relative;
@@ -123,6 +101,7 @@
       transform: translateY(0);
     }
 
+    /* EN-TÊTE — typographie ouverte, une seule ligne d'or en repère */
     .site-header {
       color: #ffffff;
       padding: 6px 0 26px;
@@ -167,6 +146,7 @@
     }
     .reset-btn:hover { color: var(--gold); border-color: var(--gold); }
 
+    /* BOUTON RETOUR — simple lien, sans cadre */
     .btn-back {
       background: none;
       border: none;
@@ -189,6 +169,7 @@
       color: #fff;
     }
 
+    /* FORMULAIRES — champs soulignés, plus de boîtes */
     input[type="text"], select {
       width: 100%;
       display: block;
@@ -248,6 +229,7 @@
       color: #e11d48;
     }
 
+    /* ONGLETS — soulignés, sans fond */
     .tabs {
       display: flex;
       margin: 32px 0 26px;
@@ -283,6 +265,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* LISTES — rangées séparées par un filet, plus de boîtes */
     .guest-list, .idea-list { list-style: none; padding: 0; margin: 0; }
     .guest-list li, .idea-list li {
       display: flex;
@@ -311,7 +294,7 @@
 
     /* PHOTOS */
     .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .photo-card { position: relative; overflow: hidden; border-radius: 2px; cursor: pointer; }
+    .photo-card { position: relative; overflow: hidden; border-radius: 2px; }
     .photo-grid img {
       width: 100%;
       aspect-ratio: 1/1;
@@ -334,7 +317,7 @@
       border-color: var(--gold);
     }
 
-    /* BULLES D'INFO */
+    /* BULLES D'INFO — filet horizontal au lieu d'un encart */
     .info-box {
       padding: 20px 0;
       border-top: 1px solid var(--line);
@@ -345,60 +328,9 @@
     }
     .info-box h3 { margin: 0 0 8px; font-size: 11px; color: var(--gold-bright); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
     .info-box p { margin: 0; font-size: 14px; color: var(--ink-muted); line-height: 1.75; }
-    .info-img {
-      width: 100%;
-      max-height: 250px;
-      object-fit: cover;
-      border-radius: 4px;
-      margin-top: 12px;
-      cursor: pointer;
-      border: 1px solid var(--line);
-    }
-
-    /* LIGHTBOX (AGRANDISSEMENT DE PHOTO) */
-    .lightbox {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(4, 10, 8, 0.95);
-      z-index: 1000;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      backdrop-filter: blur(8px);
-    }
-    .lightbox.active { display: flex; }
-    .lightbox img {
-      max-width: 100%;
-      max-height: 80vh;
-      object-fit: contain;
-      border-radius: 4px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-    }
-    .lightbox-back {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background: rgba(223, 183, 64, 0.15);
-      border: 1px solid var(--gold);
-      color: var(--gold-bright);
-      padding: 10px 18px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      transition: all 0.3s ease;
-    }
-    .lightbox-back:hover {
-      background: var(--gold);
-      color: #040a08;
-    }
 
     /* ADMIN */
-    .delete-btn, .edit-btn {
+    .delete-btn, .edit-btn, .move-btn {
       background: none;
       border: none;
       padding: 0;
@@ -414,8 +346,9 @@
     }
     .delete-btn { color: #f87171; }
     .edit-btn { color: var(--gold-bright); margin-right: 10px; }
+    .move-btn { color: var(--gold-bright); margin-right: 6px; text-decoration: none; font-size: 12px; }
 
-    body.is-admin .delete-btn, body.is-admin .edit-btn { display: inline-block; }
+    body.is-admin .delete-btn, body.is-admin .edit-btn, body.is-admin .move-btn { display: inline-block; }
 
     .delete-btn-photo {
       position: absolute; top: 8px; right: 8px;
@@ -443,7 +376,7 @@
     }
     .admin-trigger:hover { border-color: var(--gold); color: var(--gold-bright); }
 
-    /* AJOUT D'UNE BULLE D'INFO EN ADMIN */
+    /* AJOUT D'UNE BULLE D'INFO (VISIBLE UNIQUEMENT EN MODE ADMIN) */
     .admin-add-box {
       display: none;
       padding-top: 22px;
@@ -454,7 +387,7 @@
     .admin-add-box input[type="text"] { margin-bottom: 16px; }
     .admin-add-box .btn { padding: 14px; font-size: 11px; }
 
-    /* FAMILLE */
+    /* SECTION FAMILLE — ajout de proches lors de l'inscription */
     .family-section {
       margin: 4px 0 24px;
       padding-top: 20px;
@@ -474,8 +407,12 @@
       margin-bottom: 14px;
       line-height: 1.5;
     }
-    .family-row { margin-bottom: 6px; }
-    .family-row input[type="text"] { margin-bottom: 12px; }
+    .family-row {
+      margin-bottom: 6px;
+    }
+    .family-row input[type="text"] {
+      margin-bottom: 12px;
+    }
     .family-type-row {
       display: flex;
       align-items: center;
@@ -483,7 +420,11 @@
       flex-wrap: wrap;
       gap: 10px;
     }
-    .family-type-options { display: flex; gap: 6px; flex-wrap: wrap; }
+    .family-type-options {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
     .family-type-option {
       display: flex;
       align-items: center;
@@ -497,7 +438,9 @@
       transition: all 0.2s ease;
       user-select: none;
     }
-    .family-type-option input[type="radio"] { display: none; }
+    .family-type-option input[type="radio"] {
+      display: none;
+    }
     .family-type-option.active {
       border-color: var(--gold);
       color: var(--gold-bright);
@@ -510,7 +453,11 @@
       font-size: 10px;
       border-radius: 999px;
     }
-    .family-members-list { list-style: none; padding: 0; margin: 14px 0 0; }
+    .family-members-list {
+      list-style: none;
+      padding: 0;
+      margin: 14px 0 0;
+    }
     .family-members-list li {
       display: flex;
       align-items: center;
@@ -542,6 +489,20 @@
       text-underline-offset: 3px;
       flex-shrink: 0;
     }
+    .guest-family-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+      margin-left: 44px;
+    }
+    .guest-family-badges span {
+      font-size: 11px;
+      color: var(--ink-muted);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px 10px;
+    }
     .guest-member-row {
       display: flex;
       align-items: center;
@@ -566,12 +527,6 @@
     <p style="color: var(--ink-muted); font-size: 13px; margin-bottom: 18px; line-height: 1.5;">
       Une journée & soirée secrètes s'organisent pour célébrer ses <strong>40 ans</strong> !
     </p>
-
-    <!-- NOUVELLE PHOTO INTÉGRÉE AVEC LIGHTBOX -->
-    <img src="https://lh3.googleusercontent.com/d/1WvfrXC1TAYu544g42s6g-qQfDkhVSceO" 
-         alt="Aline" 
-         class="aline-featured-photo" 
-         onclick="openLightbox('https://lh3.googleusercontent.com/d/1WvfrXC1TAYu544g42s6g-qQfDkhVSceO')">
 
     <div class="info-box" style="text-align: left; margin-bottom: 20px; background: rgba(22, 61, 46, 0.4);">
       <h3 style="color: var(--gold-bright); margin-bottom: 6px;">📅 Quand & Où ?</h3>
@@ -658,61 +613,66 @@
     </div>
 
     <div id="tab-infos" class="tab-content active">
-      
-      <div class="info-box" data-info-id="default-fete">
-        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
-          <h3 style="margin-bottom:4px;">🎉 Une Fête Surprise en Secret !</h3>
-          <div>
-            <button class="edit-btn" onclick="editInfo('default-fete')">Modifier</button>
-            <button class="delete-btn" style="flex-shrink:0;" onclick="deleteDefaultInfo('default-fete')">Supprimer</button>
+      <div id="infosContainer">
+        <div class="info-box" data-info-id="default-fete">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+            <h3 style="margin-bottom:4px;">🎉 Une Fête Surprise en Secret !</h3>
+            <div>
+              <button class="move-btn" onclick="moveInfo(this, -1)">▲</button>
+              <button class="move-btn" onclick="moveInfo(this, 1)">▼</button>
+              <button class="edit-btn" onclick="editInfo('default-fete')">Modifier</button>
+              <button class="delete-btn" style="flex-shrink:0;" onclick="deleteDefaultInfo('default-fete')">Supprimer</button>
+            </div>
           </div>
+          <p>À l’occasion des 40 ans d'Aline, une belle journée s'organise en secret. La seule consigne : <strong>gardons précieusement le secret jusqu’au bout ! 🤫</strong></p>
         </div>
-        <p>À l’occasion des 40 ans d'Aline, une belle journée s'organise en secret. La seule consigne : <strong>gardons précieusement le secret jusqu’au bout ! 🤫</strong></p>
-      </div>
 
-      <div class="info-box" data-info-id="default-rdv">
-        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
-          <h3 style="margin-bottom:4px;">⏰ Rendez-vous indispensable</h3>
-          <div>
-            <button class="edit-btn" onclick="editInfo('default-rdv')">Modifier</button>
-            <button class="delete-btn" style="flex-shrink:0;" onclick="deleteDefaultInfo('default-rdv')">Supprimer</button>
+        <div class="info-box" data-info-id="default-rdv">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+            <h3 style="margin-bottom:4px;">⏰ Rendez-vous indispensable</h3>
+            <div>
+              <button class="move-btn" onclick="moveInfo(this, -1)">▲</button>
+              <button class="move-btn" onclick="moveInfo(this, 1)">▼</button>
+              <button class="edit-btn" onclick="editInfo('default-rdv')">Modifier</button>
+              <button class="delete-btn" style="flex-shrink:0;" onclick="deleteDefaultInfo('default-rdv')">Supprimer</button>
+            </div>
           </div>
+          <p>Rendez-vous le <strong>Samedi 26 septembre 2026 avant 12h00</strong> pour être bien présents avant son arrivée et lui faire la surprise !</p>
         </div>
-        <p>Rendez-vous le <strong>Samedi 26 septembre 2026 avant 12h00</strong> pour être bien présents avant son arrivée et lui faire la surprise !</p>
-      </div>
 
-      <div class="info-box" data-info-id="default-programme">
-        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
-          <h3 style="margin-bottom:4px;">🥂 Au Programme du Week-end</h3>
-          <div>
-            <button class="edit-btn" onclick="editInfo('default-programme')">Modifier</button>
-            <button class="delete-btn" style="flex-shrink:0;" onclick="deleteDefaultInfo('default-programme')">Supprimer</button>
+        <div class="info-box" data-info-id="default-programme">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+            <h3 style="margin-bottom:4px;">🥂 Au Programme du Week-end</h3>
+            <div>
+              <button class="move-btn" onclick="moveInfo(this, -1)">▲</button>
+              <button class="move-btn" onclick="moveInfo(this, 1)">▼</button>
+              <button class="edit-btn" onclick="editInfo('default-programme')">Modifier</button>
+              <button class="delete-btn" style="flex-shrink:0;" onclick="deleteDefaultInfo('default-programme')">Supprimer</button>
+            </div>
           </div>
+          <p>La journée se poursuivra tous ensemble autour d’un apéritif, d’un déjeuner, d’un après-midi détente et, si la météo le permet, d’une baignade 🏊. Le soir, place au dîner et surtout à la fête… avec une soirée dansante ! 🪩</p>
         </div>
-        <p>La journée se poursuivra tous ensemble autour d’un apéritif, d’un déjeuner, d’un après-midi détente et, si la météo le permet, d’une baignade 🏊. Le soir, place au dîner et surtout à la fête… avec une soirée dansante ! 🪩</p>
-      </div>
 
-      <div class="info-box" data-info-id="default-adresse">
-        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
-          <h3 style="margin-bottom:4px;">📍 Adresse</h3>
-          <div>
-            <button class="edit-btn" onclick="editInfo('default-adresse')">Modifier</button>
-            <button class="delete-btn" style="flex-shrink:0;" onclick="deleteDefaultInfo('default-adresse')">Supprimer</button>
+        <div class="info-box" data-info-id="default-adresse">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+            <h3 style="margin-bottom:4px;">📍 Adresse</h3>
+            <div>
+              <button class="move-btn" onclick="moveInfo(this, -1)">▲</button>
+              <button class="move-btn" onclick="moveInfo(this, 1)">▼</button>
+              <button class="edit-btn" onclick="editInfo('default-adresse')">Modifier</button>
+              <button class="delete-btn" style="flex-shrink:0;" onclick="deleteDefaultInfo('default-adresse')">Supprimer</button>
+            </div>
           </div>
+          <p>3 rue du Ried, Hagenthal-le-Bas<br><small style="color:var(--ink-muted);">Stationnement facile dans la rue et aux alentours.</small></p>
         </div>
-        <p>3 rue du Ried, Hagenthal-le-Bas<br><small style="color:var(--ink-muted);">Stationnement facile dans la rue et aux alentours.</small></p>
-      </div>
 
-      <div id="customInfoList"></div>
+        <div id="customInfoList"></div>
+      </div>
 
       <div class="admin-add-box" id="adminAddInfoBox">
         <h3 style="margin:0 0 10px; font-size:12px; color:var(--gold-bright); text-transform:uppercase; letter-spacing:1px;">🔓 Ajouter une bulle d'info</h3>
         <input type="text" id="newInfoTitle" placeholder="Titre de la bulle (ex: 🎂 Le gâteau)">
         <input type="text" id="newInfoText" placeholder="Description de la bulle">
-        <div style="margin-bottom:16px;">
-          <label style="font-size:11px; color:var(--gold-bright); display:block; margin-bottom:6px;">Photo optionnelle :</label>
-          <input type="file" id="newInfoPhoto" accept="image/*" style="font-size:12px; color:var(--ink-muted);">
-        </div>
         <button class="btn btn-pine" id="newInfoSubmit">Ajouter la bulle</button>
       </div>
     </div>
@@ -743,7 +703,7 @@
     <div id="tab-photos" class="tab-content">
       <div class="upload-zone" onclick="document.getElementById('photoInput').click()">
         <span style="font-size: 24px;">📷</span>
-        <div style="font-size: 13px; font-weight: 700; color: var(--gold-bright); margin-top: 6px;">Ajouter vos photos</div>
+        <div style="font-size: 13px; font-weight: 700; color: var(--gold-bright); margin-top: 6px;">Ajouter vos photos de la fête</div>
         <input type="file" id="photoInput" accept="image/*" style="display:none;">
       </div>
       <div id="photoEmpty" style="text-align:center; color: var(--ink-muted); font-size: 13px; display:none; padding: 10px;">Aucune photo partagée pour l'instant.</div>
@@ -756,15 +716,9 @@
 
 <button class="admin-trigger" id="adminBtn">🔒 Admin</button>
 
-<!-- LIGHTBOX POUR AGRANDIR LES PHOTOS -->
-<div class="lightbox" id="lightbox">
-  <button class="lightbox-back" id="lightboxBack">⬅️ Retour</button>
-  <img id="lightboxImg" src="" alt="Photo agrandie">
-</div>
-
 <script>
 /* =========================================================
-   1) CONFIGURATION FIREBASE
+   1) CONFIGURATION FIREBASE OFFICIELLE (ANNIVERSAIRE-ALINE)
    ========================================================= */
 const firebaseConfig = {
   apiKey: "AIzaSyDVQKZE7Tx1A__Jdqgyi6zu6A1E4SP7lXQ",
@@ -806,29 +760,7 @@ function saveLocal(){
 }
 
 /* =========================================================
-   3) LIGHTBOX (AGRANDISSEMENT DE PHOTOS ET RETOUR)
-   ========================================================= */
-const lightbox = document.getElementById('lightbox');
-const lightboxImg = document.getElementById('lightboxImg');
-const lightboxBack = document.getElementById('lightboxBack');
-
-function openLightbox(url) {
-  lightboxImg.src = url;
-  lightbox.classList.add('active');
-}
-
-lightboxBack.addEventListener('click', () => {
-  lightbox.classList.remove('active');
-});
-
-lightbox.addEventListener('click', (e) => {
-  if (e.target === lightbox) {
-    lightbox.classList.remove('active');
-  }
-});
-
-/* =========================================================
-   4) SESSION ET ÉCRANS
+   3) SESSION ET ÉCRANS
    ========================================================= */
 const screenSeal = document.getElementById('screenSeal');
 const screenDetails = document.getElementById('screenDetails');
@@ -863,7 +795,7 @@ function resetSession() {
 }
 
 /* =========================================================
-   5) RSVP & ACTIONS
+   4) RSVP & ACTIONS
    ========================================================= */
 document.getElementById('sealBtn').addEventListener('click', ()=>{
   screenSeal.classList.remove('show');
@@ -875,6 +807,7 @@ document.getElementById('btnBackToSeal').addEventListener('click', ()=>{
   screenSeal.classList.add('show');
 });
 
+/* --- GESTION DE LA LISTE FAMILLE (avant envoi du RSVP) --- */
 let familyMembers = [];
 
 function renderFamilyMembers(){
@@ -971,7 +904,7 @@ async function recordResponse(name, coming, famille){
 }
 
 /* =========================================================
-   6) ONGLETS
+   5) ONGLETS
    ========================================================= */
 function switchTab(tabId, element) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -981,7 +914,7 @@ function switchTab(tabId, element) {
 }
 
 /* =========================================================
-   7) INVITÉS
+   6) INVITÉS
    ========================================================= */
 function initials(name){
   return name.trim().split(/\s+/).slice(0,2).map(w=>w[0]?.toUpperCase()||'').join('');
@@ -1067,7 +1000,7 @@ async function deleteGuest(id){
 }
 
 /* =========================================================
-   8) PHOTOS (AVEC AGRANDISSEMENT AU CLIC)
+   7) PHOTOS ET REDIMENSIONNEMENT (< 1 MO)
    ========================================================= */
 function loadPhotos(){
   const grid = document.getElementById('photoGrid');
@@ -1077,8 +1010,8 @@ function loadPhotos(){
     if(!photos.length){ empty.style.display='block'; grid.innerHTML=''; return; }
     empty.style.display='none';
     grid.innerHTML = photos.map(p=>`
-      <div class="photo-card" onclick="openLightbox('${p.url}')">
-        <button class="delete-btn-photo" onclick="event.stopPropagation(); deletePhoto('${p.id}')">✕</button>
+      <div class="photo-card">
+        <button class="delete-btn-photo" onclick="deletePhoto('${p.id}')">✕</button>
         <img src="${p.url}" alt="Photo de fête">
       </div>
     `).join('');
@@ -1094,21 +1027,56 @@ function loadPhotos(){
   }
 }
 
-document.getElementById('photoInput').addEventListener('change', (e)=>{
+/* Compress photo dynamically so it stays well under 1MB */
+function compressImage(file, maxWidth = 1200, maxHeight = 1200, quality = 0.75) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth || height > maxHeight) {
+          if (width / height > maxWidth / maxHeight) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl);
+      };
+    };
+  });
+}
+
+document.getElementById('photoInput').addEventListener('change', async (e)=>{
   const file = e.target.files[0];
   if(!file) return;
-  const reader = new FileReader();
-  reader.onload = async (evt)=>{
-    const url = evt.target.result;
-    if(firebaseReady){
-      try { await db.collection('photos').add({ url, date: firebase.firestore.FieldValue.serverTimestamp() }); } catch(err){ console.error(err); }
-    } else {
-      localFallback.photos.push({id: Date.now().toString(), url});
-      saveLocal();
-      loadPhotos();
-    }
-  };
-  reader.readAsDataURL(file);
+
+  const url = await compressImage(file);
+
+  if(firebaseReady){
+    try { 
+      await db.collection('photos').add({ url, date: firebase.firestore.FieldValue.serverTimestamp() }); 
+    } catch(err){ console.error(err); }
+  } else {
+    localFallback.photos.push({id: Date.now().toString(), url});
+    saveLocal();
+    loadPhotos();
+  }
 });
 
 async function deletePhoto(id){
@@ -1123,7 +1091,7 @@ async function deletePhoto(id){
 }
 
 /* =========================================================
-   9) IDÉES
+   8) IDÉES
    ========================================================= */
 function loadIdeas(){
   const list = document.getElementById('ideaList');
@@ -1187,8 +1155,17 @@ async function deleteIdea(id){
 }
 
 /* =========================================================
-   10) INFOS ET BULLES PERSONNALISÉES (AVEC PHOTO ET MODIFICATION)
+   9) INFOS ET BULLES PERSONNALISÉES (REORGANISATION + EDIT)
    ========================================================= */
+function moveInfo(btn, direction) {
+  const box = btn.closest('.info-box');
+  if (direction === -1 && box.previousElementSibling) {
+    box.parentNode.insertBefore(box, box.previousElementSibling);
+  } else if (direction === 1 && box.nextElementSibling) {
+    box.parentNode.insertBefore(box.nextElementSibling, box);
+  }
+}
+
 function loadCustomInfos(){
   const container = document.getElementById('customInfoList');
 
@@ -1198,12 +1175,13 @@ function loadCustomInfos(){
         <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
           <h3 class="info-title" style="margin-bottom:4px;">${i.title}</h3>
           <div>
+            <button class="move-btn" onclick="moveInfo(this, -1)">▲</button>
+            <button class="move-btn" onclick="moveInfo(this, 1)">▼</button>
             <button class="edit-btn" onclick="editInfo('${i.id}', false)">Modifier</button>
             <button class="delete-btn" onclick="deleteCustomInfo('${i.id}')">Supprimer</button>
           </div>
         </div>
         <p class="info-text">${i.text}</p>
-        ${i.imageUrl ? `<img src="${i.imageUrl}" class="info-img" onclick="openLightbox('${i.imageUrl}')" alt="Photo info">` : ''}
       </div>
     `).join('');
   };
@@ -1221,36 +1199,22 @@ function loadCustomInfos(){
 document.getElementById('newInfoSubmit').addEventListener('click', async ()=>{
   const title = document.getElementById('newInfoTitle').value.trim();
   const text = document.getElementById('newInfoText').value.trim();
-  const fileInput = document.getElementById('newInfoPhoto');
-  const file = fileInput.files[0];
-
   if(!title || !text) return;
 
-  const saveInfo = async (imageUrl = null) => {
-    if(firebaseReady){
-      try {
-        await db.collection('infos').add({
-          title, text, imageUrl, date: firebase.firestore.FieldValue.serverTimestamp()
-        });
-      } catch(e){ console.error(e); }
-    } else {
-      localFallback.infos.push({id: Date.now().toString(), title, text, imageUrl});
-      saveLocal();
-      loadCustomInfos();
-    }
-
-    document.getElementById('newInfoTitle').value = '';
-    document.getElementById('newInfoText').value = '';
-    fileInput.value = '';
-  };
-
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (e) => saveInfo(e.target.result);
-    reader.readAsDataURL(file);
+  if(firebaseReady){
+    try {
+      await db.collection('infos').add({
+        title, text, date: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } catch(e){ console.error(e); }
   } else {
-    saveInfo();
+    localFallback.infos.push({id: Date.now().toString(), title, text});
+    saveLocal();
+    loadCustomInfos();
   }
+
+  document.getElementById('newInfoTitle').value = '';
+  document.getElementById('newInfoText').value = '';
 });
 
 async function deleteCustomInfo(id){
@@ -1264,6 +1228,7 @@ async function deleteCustomInfo(id){
   }
 }
 
+/* --- FONCTION POUR MODIFIER UNE BULLE (DÉFAUT OU PERSONNALISÉE) --- */
 async function editInfo(id, isDefault = true) {
   let box, titleEl, textEl;
 
@@ -1281,14 +1246,16 @@ async function editInfo(id, isDefault = true) {
   const currentText = textEl.innerText;
 
   const newTitle = prompt("Nouveau titre de la bulle d'info :", currentTitle);
-  if (newTitle === null) return;
+  if (newTitle === null) return; // Annulé par l'utilisateur
 
   const newText = prompt("Nouveau texte de la bulle d'info :", currentText);
-  if (newText === null) return;
+  if (newText === null) return; // Annulé par l'utilisateur
 
+  // Mise à jour visuelle immédiate sur la page
   titleEl.innerText = newTitle;
   textEl.innerText = newText;
 
+  // Sauvegarde dans Firebase ou localFallback
   if (!id.startsWith('default-')) {
     if (firebaseReady) {
       try {
@@ -1306,6 +1273,7 @@ async function editInfo(id, isDefault = true) {
       }
     }
   } else {
+    // Si c'est une bulle par défaut
     if (firebaseReady) {
       try {
         await db.collection('infosDefaults').doc(id).set({
@@ -1321,6 +1289,7 @@ async function editInfo(id, isDefault = true) {
   }
 }
 
+/* MASQUAGE ET GESTION DES BULLES PAR DÉFAUT */
 function applyHiddenDefaults(hiddenArray){
   document.querySelectorAll('.info-box[data-info-id]').forEach(el=>{
     const id = el.getAttribute('data-info-id');
@@ -1358,7 +1327,7 @@ function loadHiddenDefaults(){
 }
 
 /* =========================================================
-   11) ADMIN (MOT DE PASSE : Nous1502!)
+   10) ADMIN (MOT DE PASSE : Nous1502!)
    ========================================================= */
 const ADMIN_PASSWORD = "Nous1502!";
 
@@ -1372,7 +1341,7 @@ document.getElementById('adminBtn').addEventListener('click', ()=>{
     if(pwd === ADMIN_PASSWORD) {
       document.body.classList.add('is-admin');
       document.getElementById('adminBtn').textContent = "🔓 Quitter Admin";
-      alert("Mode administrateur activé ! Vous pouvez maintenant modifier ou supprimer des éléments.");
+      alert("Mode administrateur activé ! Vous pouvez maintenant modifier, réordonner ou supprimer des éléments.");
     } else if(pwd !== null) {
       alert("Mot de passe incorrect.");
     }
