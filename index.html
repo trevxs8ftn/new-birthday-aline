@@ -60,7 +60,7 @@
       background: radial-gradient(circle at 50% 50%, rgba(4,10,8,0.55), rgba(4,10,8,0.92));
     }
 
-    /* BANNIÈRE BOUGIE */
+    /* BANNÈRE BOUGIE */
     .candle-banner {
       width: 100%;
       height: 160px;
@@ -75,6 +75,29 @@
     @keyframes candleFadeIn {
       from { opacity: 0; transform: scale(0.97); }
       to { opacity: 1; transform: scale(1); }
+    }
+
+    /* NOUVELLE PHOTO AJOUTÉE AVEC ANIMATION */
+    .aline-featured-photo {
+      width: 100%;
+      max-height: 280px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), 0 0 15px var(--gold-glow);
+      margin: 16px 0 20px;
+      cursor: pointer;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      animation: alinePhotoFade 1.2s ease-out;
+    }
+    .aline-featured-photo:hover {
+      transform: scale(1.02);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8), 0 0 25px var(--gold-glow);
+    }
+
+    @keyframes alinePhotoFade {
+      from { opacity: 0; transform: translateY(10px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     /* CONTENEUR ET PHOTOS LATÉRALES */
@@ -543,6 +566,12 @@
     <p style="color: var(--ink-muted); font-size: 13px; margin-bottom: 18px; line-height: 1.5;">
       Une journée & soirée secrètes s'organisent pour célébrer ses <strong>40 ans</strong> !
     </p>
+
+    <!-- NOUVELLE PHOTO INTÉGRÉE AVEC LIGHTBOX -->
+    <img src="https://lh3.googleusercontent.com/d/1WvfrXC1TAYu544g42s6g-qQfDkhVSceO" 
+         alt="Aline" 
+         class="aline-featured-photo" 
+         onclick="openLightbox('https://lh3.googleusercontent.com/d/1WvfrXC1TAYu544g42s6g-qQfDkhVSceO')">
 
     <div class="info-box" style="text-align: left; margin-bottom: 20px; background: rgba(22, 61, 46, 0.4);">
       <h3 style="color: var(--gold-bright); margin-bottom: 6px;">📅 Quand & Où ?</h3>
